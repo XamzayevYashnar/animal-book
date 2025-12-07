@@ -13,9 +13,9 @@ def login_view(request):
             login(request, user)
             return redirect('home')  
         else:
-            return render(request, 'users/login.html', {'error': 'Invalid credentials'})
+            return render(request, 'main_app/users/login.html', {'error': 'Invalid credentials'})
 
-    return render(request, 'users/login.html')
+    return render(request, 'main_app/users/login.html')
 
 
 def register_view(request):
@@ -33,7 +33,7 @@ def register_view(request):
         login(request, user)
         return redirect('home')
 
-    return render(request, 'users/register.html')
+    return render(request, 'main_app/users/register.html')
 
 
 def logout_view(request):
