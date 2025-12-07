@@ -1,0 +1,265 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Maxfiylik siyosati - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Sarlavha -->
+            <div class="text-center mb-5">
+                <h1 class="mb-3">Maxfiylik siyosati</h1>
+                <p class="text-muted">Oxirgi yangilanish: {% now "d F Y" %}</p>
+                <p class="lead">Shaxsiy ma'lumotlaringizni qanday himoya qilishimiz va qanday foydalanishimiz haqida</p>
+            </div>
+
+            <!-- Kirish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">1. Kirish</h4>
+                    <p>Pet Taahkent platformasi foydalanuvchilarning maxfiyligini hurmat qiladi va himoya qiladi. Ushbu maxfiylik siyosati shaxsiy ma'lumotlarni qanday to'plash, ishlatish, himoya qilish va uzatish haqida ma'lumot beradi.</p>
+                    <p>Platformadan foydalanish orqali siz ushbu siyosatga muvofiq ma'lumotlaringizni to'plash va ishlatishga rozilik bildirasiz.</p>
+                </div>
+            </div>
+
+            <!-- Qanday ma'lumot to'playmiz -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">2. Qanday ma'lumot to'playmiz</h4>
+                    
+                    <h6>2.1 Siz tomonidan taqdim etilgan ma'lumotlar</h6>
+                    <ul>
+                        <li><strong>Shaxsiy ma'lumotlar:</strong> Ism, familiya, elektron pochta, telefon raqami</li>
+                        <li><strong>Profil ma'lumotlari:</strong> Manzil, profil rasmi, foydalanuvchi nomi</li>
+                        <li><strong>Hayvon ma'lumotlari:</strong> Qo'shilgan hayvonlar haqida ma'lumotlar</li>
+                        <li><strong>Xayriya ma'lumotlari:</strong> Xayriya tarixi va to'lov ma'lumotlari</li>
+                        <li><strong>Aloqa ma'lumotlari:</strong> Yuborilgan xabarlar va so'rovlar</li>
+                    </ul>
+
+                    <h6>2.2 Avtomatik to'planadigan ma'lumotlar</h6>
+                    <ul>
+                        <li><strong>Qurilma ma'lumotlari:</strong> IP manzil, brauzer turi, operatsion tizim</li>
+                        <li><strong>Foydalanish ma'lumotlari:</strong> Sahifalar bo'yicha harakatlar, vaqt, bosishlar</li>
+                        <li><strong>Joylashuv ma'lumotlari:</strong> Agar ruxsat bersangiz, yaqin atrofdagi ob'ektlarni topish uchun</li>
+                        <li><strong>Cookie fayllari:</strong> Sessiyani saqlash va foydalanish tajribasini yaxshilash uchun</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ma'lumotlardan foydalanish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">3. Ma'lumotlardan qanday foydalanamiz</h4>
+                    
+                    <h6>3.1 Platforma xizmatlari uchun</h6>
+                    <ul>
+                        <li>Hisob yaratish va boshqarish</li>
+                        <li>Hayvonlar ro'yxatini ko'rsatish va boshqarish</li>
+                        <li>Xayriya jarayonlarini amalga oshirish</li>
+                        <li>Foydalanuvchilar o'rtasida aloqa o'rnatish</li>
+                        <li>Texnik yordam ko'rsatish</li>
+                    </ul>
+
+                    <h6>3.2 Foydalanishni yaxshilash uchun</h6>
+                    <ul>
+                        <li>Platforma funksionalligini takomillashtirish</li>
+                        <li>Shaxsiylashtirilgan tavsiyalar berish</li>
+                        <li>Foydalanish statistikasini tahlil qilish</li>
+                        <li>Xavfsizlikni ta'minlash va firibgarlikni aniqlash</li>
+                    </ul>
+
+                    <h6>3.3 Kommunikatsiya uchun</h6>
+                    <ul>
+                        <li>Hisob yangiliklari haqida xabar berish</li>
+                        <li>Xayriya va asrab olish holatlari haqida ma'lumot berish</li>
+                        <li>Platforma yangiliklari va takliflari haqida xabardor qilish</li>
+                        <li>So'rov va shikoyatlarga javob berish</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ma'lumotlarni uzatish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">4. Ma'lumotlarni uchinchi shaxslarga uzatish</h4>
+                    
+                    <h6>4.1 Uchinchi tomon xizmatlari</h6>
+                    <p>Platforma quyidagi uchinchi tomon xizmatlaridan foydalanadi:</p>
+                    <ul>
+                        <li><strong>Cloud hosting:</strong> Ma'lumotlarni saqlash uchun</li>
+                        <li><strong>To'lov tizimlari:</strong> Xayriya to'lovlari uchun</li>
+                        <li><strong>Analitika:</strong> Foydalanishni tahlil qilish uchun</li>
+                        <li><strong>Email xizmatlari:</strong> Xabarlarni yuborish uchun</li>
+                    </ul>
+
+                    <h6>4.2 Qonuniy talablar</h6>
+                    <p>Quyidagi holatlarda ma'lumotlaringizni uchinchi shaxslarga uzatishimiz mumkin:</p>
+                    <ul>
+                        <li>Qonun bilan talab qilinishida</li>
+                        <li>Huquqlarni himoya qilish zarurati tug'ilganda</li>
+                        <li>Firibgarlik yoki boshqa noqonuniy faoliyatni oldini olishda</li>
+                        <li>Platforma xavfsizligini himoya qilishda</li>
+                    </ul>
+
+                    <h6>4.3 Platforma ichidagi uzatish</h6>
+                    <p>Quyidagi holatlarda ma'lumotlaringiz platforma ichida uzatiladi:</p>
+                    <ul>
+                        <li>Hayvon sotuvida sotuvchi va xaridor o'rtasida</li>
+                        <li>Asrab olish so'rovida so'rovchi va hayvon egasi o'rtasida</li>
+                        <li>Xayriya qilganda donor va boshpana o'rtasida</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ma'lumotlarni himoya qilish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">5. Ma'lumotlarni qanday himoya qilamiz</h4>
+                    
+                    <h6>5.1 Texnik choralar</h6>
+                    <ul>
+                        <li>Ma'lumotlarni shifrlash (SSL/TLS)</li>
+                        <li>Xavfsiz serverlar va ma'lumotlar bazasi</li>
+                        <li>Muntazam zaxiralash</li>
+                        <li>Dasturiy ta'minotni yangilab turish</li>
+                        <li>Xavfsizlik tekshiruvlari va auditlar</li>
+                    </ul>
+
+                    <h6>5.2 Ma'muriy choralar</h6>
+                    <ul>
+                        <li>Xodimlarga maxfiylik bo'yicha o'qitish</li>
+                        <li>Ma'lumotlarga cheklangan kirish huquqlari</li>
+                        <li>Foydalanuvchi ma'lumotlariga kirish jurnallari</li>
+                        <li>Xavfsizlik siyosati va protokollari</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Foydalanuvchi huquqlari -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">6. Foydalanuvchi huquqlari</h4>
+                    
+                    <p>Siz quyidagi huquqlarga egasiz:</p>
+                    
+                    <h6>6.1 Kirish huquqi</h6>
+                    <ul>
+                        <li>Shaxsiy ma'lumotlaringizni ko'rish</li>
+                        <li>Profil ma'lumotlaringizni yangilash</li>
+                        <li>Hisobingizni boshqarish</li>
+                    </ul>
+
+                    <h6>6.2 Tuzatish va o'chirish huquqi</h6>
+                    <ul>
+                        <li>Noto'g'ri ma'lumotlarni tuzatish</li>
+                        <li>Ma'lumotlarni yangilash</li>
+                        <li>Hisobingizni o'chirish (ba'zi ma'lumotlar saqlanishi mumkin)</li>
+                    </ul>
+
+                    <h6>6.3 Cheklash huquqi</h6>
+                    <ul>
+                        <li>Ma'lumotlaringizni qayta ishlashni cheklash</li>
+                        <li>Marketing xabarlarini rad etish</li>
+                        <li>Cookie fayllarini nazorat qilish</li>
+                    </ul>
+
+                    <h6>6.4 Ma'lumotlarni ko'chirish huquqi</h6>
+                    <p>Ma'lumotlaringizning ko'chirmasini olishingiz mumkin (mavjud formatda).</p>
+
+                    <h6>6.5 Huquqlarni amalga oshirish</h6>
+                    <p>Huquqlaringizni amalga oshirish uchun quyidagi manzilga murojaat qiling:</p>
+                    <ul>
+                        <li>Email: privacy@petaahkent.uz</li>
+                        <li>Telefon: +998 71 123 45 67</li>
+                        <li>Murojaat muddati: 30 kun ichida javob beramiz</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cookie fayllari -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">7. Cookie fayllari</h4>
+                    
+                    <h6>7.1 Cookie turlari</h6>
+                    <ul>
+                        <li><strong>Zarur cookie:</strong> Platformaning asosiy funksiyalari uchun</li>
+                        <li><strong>Funktsional cookie:</strong> Sessiyani saqlash, til tanlash uchun</li>
+                        <li><strong>Analitik cookie:</strong> Foydalanishni tahlil qilish uchun</li>
+                        <li><strong>Marketing cookie:</strong> Reklama va tavsiyalar uchun</li>
+                    </ul>
+
+                    <h6>7.2 Cookie boshqaruvi</h6>
+                    <p>Siz brauzeringiz sozlamalari orqali cookie fayllarini boshqarishingiz mumkin. Ammo ba'zi cookie fayllarini o'chirish platforma funksionalligiga ta'sir qilishi mumkin.</p>
+                </div>
+            </div>
+
+            <!-- Bolalar maxfiyligi -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">8. Bolalar maxfiyligi</h4>
+                    <p>Platforma 18 yoshdan kichik shaxslar tomonidan foydalanish uchun mo'ljallanmagan. Agar biz 18 yoshdan kichik shaxsning ma'lumotlarini to'plaganimizni bilsak, ularni darhol o'chiramiz.</p>
+                    <p>Bolalar haqida ma'lumotlar faqat ota-onalar yoki qonuniy vakillar tomonidan kiritilishi mumkin.</p>
+                </div>
+            </div>
+
+            <!-- Xalqaro uzatish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">9. Xalqaro ma'lumot uzatish</h4>
+                    <p>Platforma O'zbekiston Respublikasida joylashgan. Ammo ma'lumotlar xalqaro cloud xizmatlari orqali boshqa mamlakatlarda saqlanishi mumkin. Bunday holda, ma'lumotlar ushbu maxfiylik siyosati va xalqaro standartlarga muvofiq himoya qilinadi.</p>
+                </div>
+            </div>
+
+            <!-- O'zgarishlar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">10. Maxfiylik siyosatini o'zgartirish</h4>
+                    <p>Biz ushbu maxfiylik siyosatini vaqt-vaqti bilan yangilashimiz mumkin. O'zgarishlar ushbu sahifada e'lon qilinadi. Muntazam ravishda maxfiylik siyosatimizni ko'rib chiqishingizni tavsiya etamiz.</p>
+                    <p>O'zgarishlardan keyin platformadan foydalanish yangi maxfiylik siyosatiga rozilik bildirish hisoblanadi.</p>
+                </div>
+            </div>
+
+            <!-- Aloqa -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">11. Aloqa</h4>
+                    <p>Maxfiylik siyosati bo'yicha savol va takliflar uchun quyidagi kanallar orqali bog'lanishingiz mumkin:</p>
+                    <ul>
+                        <li><strong>Maxfiylik bo'yicha mas'ul shaxs:</strong> Maxfiylik bo'limi</li>
+                        <li><strong>Email:</strong> privacy@petaahkent.uz</li>
+                        <li><strong>Telefon:</strong> +998 71 123 45 67 (123 - maxfiylik bo'limi)</li>
+                        <li><strong>Manzil:</strong> Toshkent shahri, Yunusobod tumani</li>
+                        <li><strong>Ish vaqti:</strong> Dushanba-Juma, 09:00-18:00</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Maxfiylik sarlavhasi -->
+            <div class="alert alert-success mt-5">
+                <div class="d-flex">
+                    <i class="fas fa-shield-alt fa-2x me-3"></i>
+                    <div>
+                        <h5>Maxfiylik - bizning ustuvorligimiz</h5>
+                        <p class="mb-0">Biz sizning maxfiyligingizni jiddiy qabul qilamiz va ma'lumotlaringizni ehtiyotkorlik bilan himoya qilishga intilamiz. Har qanday savol yoki tashvish bo'lsa, biz bilan bog'lanishingizni taklif qilamiz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-left: 4px solid #2d8f4b;
+    }
+    
+    .card-title {
+        color: #2d8f4b;
+    }
+    
+    .alert-success {
+        border-left: 4px solid #28a745;
+    }
+</style>
+{% endblock %}

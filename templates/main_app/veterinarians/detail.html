@@ -1,0 +1,258 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}{{ vet.name }} - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Orqaga qaytish -->
+    <a href="{% url 'veterinarians_list' %}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left me-2"></i>Veterinariyalar ro'yxati
+    </a>
+    
+    <div class="row">
+        <!-- Asosiy ma'lumotlar -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="card-title mb-2">{{ vet.name }}</h1>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-secondary fs-6">{{ vet.get_clinic_type_display }}</span>
+                                {% if vet.is_emergency %}
+                                <span class="badge bg-danger fs-6">
+                                    <i class="fas fa-ambulance me-1"></i>Shoshilinch xizmat
+                                </span>
+                                {% endif %}
+                                <div class="text-warning">
+                                    {% with ''|center:vet.rating as range %}
+                                    {% for i in range %}
+                                    <i class="fas fa-star"></i>
+                                    {% endfor %}
+                                    {% endwith %}
+                                    <span class="text-muted ms-2">{{ vet.rating|floatformat:1 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge {% if is_open_now %}bg-success{% else %}bg-secondary{% endif %} fs-6">
+                                {% if is_open_now %}Ochiq{% else %}Yopiq{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Manzil va kontakt -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-3">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <strong>Manzil:</strong><br>
+                                {{ vet.address }}
+                            </p>
+                            <p class="mb-3">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <strong>Telefon:</strong><br>
+                                <a href="tel:{{ vet.phone_number }}" class="text-decoration-none">
+                                    {{ vet.phone_number }}
+                                </a>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if vet.email %}
+                            <p class="mb-3">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <strong>Email:</strong><br>
+                                <a href="mailto:{{ vet.email }}" class="text-decoration-none">
+                                    {{ vet.email }}
+                                </a>
+                            </p>
+                            {% endif %}
+                            {% if vet.website %}
+                            <p class="mb-3">
+                                <i class="fas fa-globe text-primary me-2"></i>
+                                <strong>Veb-sayt:</strong><br>
+                                <a href="{{ vet.website }}" target="_blank" class="text-decoration-none">
+                                    {{ vet.website }}
+                                </a>
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Ish vaqti -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-clock text-primary me-2"></i>Ish vaqti
+                        </h5>
+                        <p class="fs-5">{{ vet.working_hours }}</p>
+                        <div class="d-flex align-items-center">
+                            <span class="badge {% if is_open_now %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                                {% if is_open_now %}Hozir ochiq{% else %}Hozir yopiq{% endif %}
+                            </span>
+                            <small class="text-muted">Hayvonlaringizni olib kelishdan oldin tekshiring</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Xizmatlar -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-stethoscope text-primary me-2"></i>Xizmatlar
+                        </h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for service in services_list %}
+                            <span class="badge bg-primary">{{ service }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Tavsif -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-file-alt text-primary me-2"></i>Tavsif
+                        </h5>
+                        <p class="card-text">{{ vet.description|linebreaks }}</p>
+                    </div>
+                    
+                    <!-- Qo'shimcha ma'lumotlar -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <i class="fas fa-user-md text-primary me-2"></i>
+                                <strong>Rahbar:</strong> {{ vet.director }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <i class="fas fa-users text-primary me-2"></i>
+                                <strong>Shifokorlar:</strong> {{ vet.doctors_count }} ta
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Tez amallar -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Tez amallar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="tel:{{ vet.phone_number }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-phone me-2"></i>Qo'ng'iroq qilish
+                        </a>
+                        <a href="https://maps.google.com/?q={{ vet.address }}" target="_blank" 
+                           class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-map-marked-alt me-2"></i>Xaritada ko'rish
+                        </a>
+                        <button class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" 
+                                data-bs-target="#shareModal">
+                            <i class="fas fa-share-alt me-2"></i>Ulashish
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Yaqin atrofdagi veterinariyalar -->
+            {% if nearby_vets %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Yaqin atrofdagilar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for nearby in nearby_vets %}
+                        <a href="{% url 'veterinarian_detail' nearby.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ nearby.name }}</h6>
+                                <small class="text-muted">{{ nearby.rating|floatformat:1 }}</small>
+                            </div>
+                            <p class="mb-1 small text-muted">{{ nearby.address|truncatechars:30 }}</p>
+                            <small class="text-muted">
+                                {% if nearby.is_emergency %}
+                                <i class="fas fa-ambulance text-danger me-1"></i>Shoshilinch
+                                {% endif %}
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Xarita -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-map-marked-alt me-2"></i>Joylashuv
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if vet.latitude and vet.longitude %}
+            <div class="alert alert-info">
+                <p class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Xarita funksiyasi tez orada qo'shiladi
+                </p>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <p class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Ushbu veterinariyaning koordinatalari kiritilmagan. 
+                    <a href="#" class="text-decoration-none">Xarita koordinatalarini qo'shish</a>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Veterinariyani ulashish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ vet.name }} veterinariyasini ulashish:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" value="{{ request.build_absolute_uri }}" 
+                           id="shareUrl" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyShareUrl()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="https://t.me/share/url?url={{ request.build_absolute_uri|urlencode }}&text={{ vet.name }}" 
+                       target="_blank" class="btn btn-primary">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="https://api.whatsapp.com/send?text={{ vet.name }} {{ request.build_absolute_uri|urlencode }}" 
+                       target="_blank" class="btn btn-success">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyShareUrl() {
+    const shareUrl = document.getElementById('shareUrl');
+    shareUrl.select();
+    shareUrl.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    alert('Link nusxalandi!');
+}
+</script>
+{% endblock %}

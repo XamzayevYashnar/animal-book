@@ -1,0 +1,634 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Veterinariyalar - Pet Taahkent{% endblock %}
+
+{% block content %}
+<style>
+    /* Umumiy uslublar */
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3a0ca3;
+        --success-color: #4cc9f0;
+        --danger-color: #f72585;
+        --warning-color: #f8961e;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        --transition: all 0.3s ease;
+        --border-radius: 12px;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+    
+    /* Sarlavha */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        transform: rotate(30deg);
+    }
+    
+    .page-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .page-header .btn-outline-light {
+        border-width: 2px;
+        font-weight: 600;
+        padding: 0.5rem 1.5rem;
+        transition: var(--transition);
+    }
+    
+    .page-header .btn-outline-light:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    /* Filtrlar kartasi */
+    .filter-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        border: none;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .filter-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+    }
+    
+    .filter-card .form-label {
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-select, .form-control {
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem;
+        transition: var(--transition);
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+    }
+    
+    /* Veterinariya kartalari */
+    .vet-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        border: none;
+        overflow: hidden;
+        transition: var(--transition);
+        height: 100%;
+        position: relative;
+    }
+    
+    .vet-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--hover-shadow);
+    }
+    
+    .vet-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    }
+    
+    .vet-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+    
+    .badge-clinic {
+        background: linear-gradient(135deg, #4cc9f0, #4361ee);
+        color: white;
+        font-weight: 500;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+    }
+    
+    .badge-emergency {
+        background: linear-gradient(135deg, #f72585, #ff6b6b);
+        color: white;
+        font-weight: 500;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    /* Reyting yulduzlari */
+    .rating {
+        color: #ffc107;
+        font-size: 1.1rem;
+    }
+    
+    .rating-number {
+        color: var(--dark-color);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    /* Xizmatlar */
+    .services-container {
+        margin: 1rem 0;
+    }
+    
+    .service-badge {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        color: var(--dark-color);
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        transition: var(--transition);
+    }
+    
+    .service-badge:hover {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Ish vaqti */
+    .working-hours {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-left: 4px solid var(--success-color);
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    /* Aloqa ma'lumotlari */
+    .contact-info {
+        background: linear-gradient(135deg, #f1f8ff, #e3f2fd);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .contact-info i {
+        color: var(--primary-color);
+        width: 20px;
+    }
+    
+    /* Tugmalar */
+    .btn-custom {
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: var(--transition);
+        border: 2px solid transparent;
+    }
+    
+    .btn-details {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+    
+    .btn-details:hover {
+        background: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .btn-call {
+        background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        color: white;
+    }
+    
+    .btn-call:hover {
+        background: white;
+        color: #2E7D32;
+        border-color: #2E7D32;
+        transform: translateY(-2px);
+    }
+    
+    .btn-map {
+        background: linear-gradient(135deg, #757575, #424242);
+        color: white;
+    }
+    
+    .btn-map:hover {
+        background: white;
+        color: #424242;
+        border-color: #424242;
+        transform: translateY(-2px);
+    }
+    
+    /* Xarita bo'limi */
+    .map-section {
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        margin-top: 3rem;
+        overflow: hidden;
+    }
+    
+    .map-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .info-alert {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border: none;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    /* Bo'sh holat */
+    .empty-state {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 4rem 2rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Responsive dizayn */
+    @media (max-width: 768px) {
+        .page-header {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.75rem;
+        }
+        
+        .vet-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-group {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+    }
+    
+    /* Animatsiyalar */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .vet-card {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Scroll effekti */
+    .vet-card:nth-child(1) { animation-delay: 0.1s; }
+    .vet-card:nth-child(2) { animation-delay: 0.2s; }
+    .vet-card:nth-child(3) { animation-delay: 0.3s; }
+    .vet-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="container mt-4">
+    <!-- Sarlavha -->
+    <div class="page-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div class="mb-3 mb-md-0">
+                <h1><i class="fas fa-clinic-medical me-3"></i>Veterinariya Klinikalari</h1>
+                <p class="mb-0 opacity-75">Sizning sevimli hamrohingiz uchun eng yaxshi veterinariya xizmatlari</p>
+            </div>
+            <a href="{% url 'contact' %}" class="btn btn-outline-light">
+                <i class="fas fa-plus me-2"></i>Klinika Qo'shish
+            </a>
+        </div>
+    </div>
+    
+    <!-- Filtrlar -->
+    <div class="card filter-card">
+        <div class="card-header d-flex align-items-center">
+            <i class="fas fa-filter me-2"></i>
+            <span>Filtrlar</span>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="row g-4">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">🏥 Klinika turi</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">Barchasi</option>
+                        <option value="clinic" {% if current_type == 'clinic' %}selected{% endif %}>Klinika</option>
+                        <option value="hospital" {% if current_type == 'hospital' %}selected{% endif %}>Shifoxona</option>
+                        <option value="mobile" {% if current_type == 'mobile' %}selected{% endif %}>Mobil xizmat</option>
+                        <option value="specialized" {% if current_type == 'specialized' %}selected{% endif %}>Mutaxassislik</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="service" class="form-label">🩺 Xizmat turi</label>
+                    <select name="service" id="service" class="form-select">
+                        <option value="">Barchasi</option>
+                        {% for service_code, service_name in services %}
+                        <option value="{{ service_code }}" {% if current_service == service_code %}selected{% endif %}>
+                            {{ service_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label for="search" class="form-label">🔍 Qidirish</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" id="search" class="form-control" 
+                               placeholder="Klinika nomi, manzili, xizmatlari..." value="{{ search_query }}">
+                    </div>
+                </div>
+                
+                <div class="col-md-2">
+                    <div class="form-check mt-4 pt-2">
+                        <input class="form-check-input" type="checkbox" id="emergency" 
+                               name="emergency" value="yes" {% if emergency_filter == 'yes' %}checked{% endif %}>
+                        <label class="form-check-label fw-bold" for="emergency">
+                            <i class="fas fa-ambulance text-danger me-1"></i>Shoshilinch xizmat
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-custom btn-details">
+                            <i class="fas fa-search me-2"></i>Qidirish
+                        </button>
+                        <a href="{% url 'veterinarians_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo me-2"></i>Tozalash
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Veterinariyalar ro'yxati -->
+    <div class="row">
+        {% if veterinarians %}
+            {% for vet in veterinarians %}
+            <div class="col-lg-6 mb-4">
+                <div class="vet-card h-100">
+                    <div class="card-body">
+                        <!-- Sarlavha va shoshilinch belgisi -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-2">{{ vet.name }}</h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge-clinic">{{ vet.get_clinic_type_display }}</span>
+                                    {% if vet.is_emergency %}
+                                    <span class="badge-emergency">
+                                        <i class="fas fa-ambulance me-1"></i>24/7 Shoshilinch
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Reyting -->
+                            <div class="text-end">
+                                <div class="rating">
+                                    {% with ''|center:vet.rating as range %}
+                                    {% for i in range %}
+                                    <i class="fas fa-star"></i>
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                                <span class="rating-number">{{ vet.rating|floatformat:1 }}</span>
+                                <small class="d-block text-muted">{{ vet.review_count }} ta sharh</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Manzil -->
+                        <p class="card-text text-muted mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            {{ vet.address }}
+                        </p>
+                        
+                        <!-- Xizmatlar -->
+                        <div class="services-container">
+                            <h6 class="text-primary mb-2"><i class="fas fa-stethoscope me-2"></i>Xizmatlar:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for service in vet.get_services_list %}
+                                <span class="service-badge">{{ service }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Ish vaqti -->
+                        <div class="working-hours">
+                            <h6 class="text-primary mb-2"><i class="fas fa-clock me-2"></i>Ish vaqti:</h6>
+                            <p class="card-text mb-2 fw-medium">{{ vet.working_hours }}</p>
+                            {% if vet.is_open_now %}
+                            <span class="status-badge bg-success text-white">
+                                <i class="fas fa-check-circle me-1"></i>Hozir ochiq
+                            </span>
+                            {% else %}
+                            <span class="status-badge bg-secondary text-white">
+                                <i class="fas fa-times-circle me-1"></i>Hozir yopiq
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Aloqa -->
+                        <div class="contact-info">
+                            <h6 class="text-primary mb-2"><i class="fas fa-phone-alt me-2"></i>Aloqa:</h6>
+                            <p class="card-text mb-2">
+                                <i class="fas fa-phone me-2"></i>
+                                <a href="tel:{{ vet.phone_number }}" class="text-decoration-none fw-medium">
+                                    {{ vet.phone_number }}
+                                </a>
+                            </p>
+                            {% if vet.website %}
+                            <p class="card-text mb-0">
+                                <i class="fas fa-globe me-2"></i>
+                                <a href="{{ vet.website }}" target="_blank" class="text-decoration-none fw-medium">
+                                    {{ vet.website|truncatechars:30 }}
+                                </a>
+                            </p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Tugmalar -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'veterinarian_detail' vet.pk %}" class="btn btn-custom btn-details">
+                                <i class="fas fa-info-circle me-2"></i>Batafsil ma'lumot
+                            </a>
+                            <div class="btn-group">
+                                <a href="tel:{{ vet.phone_number }}" class="btn btn-custom btn-call">
+                                    <i class="fas fa-phone me-2"></i>Qo'ng'iroq
+                                </a>
+                                <a href="https://maps.google.com/?q={{ vet.address }}" 
+                                   target="_blank" class="btn btn-custom btn-map">
+                                    <i class="fas fa-map-marked-alt me-2"></i>Xarita
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <!-- Hech narsa topilmasa -->
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-stethoscope"></i>
+                <h3 class="text-muted">Hech qanday veterinariya topilmadi</h3>
+                <p class="text-muted mb-4">Filtr parametrlarini o'zgartiring yoki klinika qo'shing</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'veterinarians_list' %}" class="btn btn-custom btn-details">
+                        <i class="fas fa-redo me-2"></i>Barcha filtrlarni tozalash
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>Klinika Qo'shish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Xarita funksiyasi -->
+    <div class="map-section">
+        <div class="map-header">
+            <h5 class="mb-0">
+                <i class="fas fa-map-marked-alt me-2"></i>Veterinariyalar Xaritasi
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="info-alert alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle fa-2x me-3 text-primary"></i>
+                    <div>
+                        <h6 class="mb-1">Tez kunda!</h6>
+                        <p class="mb-0">
+                            Yaqin atrofdagi veterinariyalarni xaritada ko'rish funksiyasi tez orada qo'shiladi. 
+                            Hozircha yuqoridagi ro'yxatdan foydalanishingiz mumkin.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript qo'shimchalari -->
+<script>
+    // Form avtomatik ravishda submit qilish
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterSelects = document.querySelectorAll('#type, #service, #emergency');
+        const searchInput = document.querySelector('#search');
+        
+        // Filtrlarni o'zgartirganda formni yuborish
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        });
+        
+        // Qidiruv so'zi kiritilganda
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.closest('form').submit();
+            }, 500);
+        });
+        
+        // Kartalarga hover effekti
+        const vetCards = document.querySelectorAll('.vet-card');
+        vetCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

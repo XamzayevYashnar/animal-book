@@ -1,0 +1,171 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}{{ animal.name }}ni tahrirlash - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>{{ animal.name }}ni tahrirlash
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Hayvon nomi *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ animal.name }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="animal_type" class="form-label">Hayvon turi *</label>
+                                <select class="form-select" id="animal_type" name="animal_type" required>
+                                    <option value="dog" {% if animal.animal_type == 'dog' %}selected{% endif %}>Kuchuk</option>
+                                    <option value="cat" {% if animal.animal_type == 'cat' %}selected{% endif %}>Mushuk</option>
+                                    <option value="bird" {% if animal.animal_type == 'bird' %}selected{% endif %}>Qush</option>
+                                    <option value="rabbit" {% if animal.animal_type == 'rabbit' %}selected{% endif %}>Quyon</option>
+                                    <option value="other" {% if animal.animal_type == 'other' %}selected{% endif %}>Boshqa</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="breed" class="form-label">Zoti</label>
+                                <input type="text" class="form-control" id="breed" name="breed" 
+                                       value="{{ animal.breed|default:'' }}">
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="age" class="form-label">Yoshi</label>
+                                <input type="number" class="form-control" id="age" name="age" 
+                                       value="{{ animal.age|default:'' }}" min="0" max="50">
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="gender" class="form-label">Jinsi</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Tanlang</option>
+                                    <option value="male" {% if animal.gender == 'male' %}selected{% endif %}>Erkak</option>
+                                    <option value="female" {% if animal.gender == 'female' %}selected{% endif %}>Urg'ochi</option>
+                                    <option value="unknown" {% if animal.gender == 'unknown' %}selected{% endif %}>Noma'lum</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Manzil *</label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       value="{{ animal.location }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="phone_number" class="form-label">Telefon raqam *</label>
+                                <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                                       value="{{ animal.phone_number }}" required>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_for_sale" 
+                                           name="is_for_sale" {% if animal.is_for_sale %}checked{% endif %}
+                                           onchange="togglePriceField()">
+                                    <label class="form-check-label" for="is_for_sale">
+                                        Hayvon sotiladi
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3" id="price_field" 
+                                 style="{% if not animal.is_for_sale %}display: none;{% endif %}">
+                                <label for="price" class="form-label">Narx (so'm)</label>
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       value="{{ animal.price|default:'' }}" min="0" step="1000">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Holati</label>
+                                <select class="form-select" id="status" name="status">
+                                    {% for status_code, status_name in status_choices %}
+                                    <option value="{{ status_code }}" 
+                                            {% if animal.status == status_code %}selected{% endif %}>
+                                        {{ status_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="vaccinated" 
+                                                   name="vaccinated" {% if animal.vaccinated %}checked{% endif %}>
+                                            <label class="form-check-label" for="vaccinated">
+                                                Emlangan
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sterilized" 
+                                                   name="sterilized" {% if animal.sterilized %}checked{% endif %}>
+                                            <label class="form-check-label" for="sterilized">
+                                                Sterilizatsiya qilingan
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mb-4">
+                                <label for="description" class="form-label">Tavsif *</label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="5" required>{{ animal.description }}</textarea>
+                            </div>
+                            
+                            <div class="col-12 mb-4">
+                                <label for="image" class="form-label">Rasmni yangilash</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                {% if animal.image %}
+                                <div class="mt-2">
+                                    <p class="mb-1">Joriy rasm:</p>
+                                    <img src="{{ animal.image.url }}" alt="{{ animal.name }}" 
+                                         class="img-thumbnail" width="150">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'animal_detail' animal.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-2"></i>O'zgarishlarni saqlash
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePriceField() {
+    const priceField = document.getElementById('price_field');
+    const isForSale = document.getElementById('is_for_sale').checked;
+    
+    if (isForSale) {
+        priceField.style.display = 'block';
+    } else {
+        priceField.style.display = 'none';
+        document.getElementById('price').value = '';
+    }
+}
+</script>
+{% endblock %}

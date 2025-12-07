@@ -1,0 +1,596 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Pet Taahkent - Bosh sahifa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-section {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 180px;
+        flex: 1;
+    }
+    
+    .filter-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark-text);
+    }
+    
+    .filter-select, .filter-input {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: var(--transition);
+    }
+    
+    .filter-select:focus, .filter-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(45, 143, 75, 0.1);
+    }
+    
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+    }
+    
+    .filter-btn {
+        padding: 10px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+    
+    .filter-btn.apply {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+    
+    .filter-btn.apply:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .filter-btn.reset {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+    }
+    
+    .filter-btn.reset:hover {
+        background-color: #e0e0e0;
+    }
+    
+    .categories-section {
+        margin-bottom: 40px;
+    }
+    
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
+    }
+    
+    .category-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        text-align: center;
+        transition: var(--transition);
+        cursor: pointer;
+        border: 2px solid transparent;
+        text-decoration: none;
+        color: var(--dark-text);
+        display: block;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+    }
+    
+    .category-card.active {
+        border-color: var(--primary-color);
+        background-color: rgba(45, 143, 75, 0.05);
+    }
+    
+    .category-icon {
+        font-size: 40px;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .category-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .category-count {
+        color: var(--light-text);
+        font-size: 14px;
+    }
+    
+    .pets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .pet-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        position: relative;
+    }
+    
+    .pet-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .pet-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .pet-badge.free {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .pet-badge.paid {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .pet-image-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .pet-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    
+    .pet-card:hover .pet-image {
+        transform: scale(1.05);
+    }
+    
+    .pet-info {
+        padding: 20px;
+    }
+    
+    .pet-name {
+        font-size: 20px;
+        margin-bottom: 5px;
+        color: var(--dark-text);
+    }
+    
+    .pet-type {
+        color: var(--primary-color);
+        font-weight: 500;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .pet-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .pet-detail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--light-text);
+        font-size: 14px;
+    }
+    
+    .pet-price {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 15px 0;
+    }
+    
+    .pet-price.free {
+        color: #28a745;
+    }
+    
+    .no-animals {
+        text-align: center;
+        padding: 50px;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-top: 30px;
+    }
+    
+    .no-animals-icon {
+        font-size: 60px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    
+    .no-animals h3 {
+        color: var(--light-text);
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero bo'limi -->
+<section class="hero-section">
+    <h1 class="hero-title">Pet Tashkent tizmiga, xush kelibsiz!</h1>
+    <p class="hero-subtitle">Shahar hayvonlari ekotizimi - hayvonlarni sotish/olish, asrab qolish, veterinariya xizmatlari va xayriya qilish uchun yagona platforma</p>
+    <div class="hero-buttons">
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_animal' %}" class="btn btn-primary">Hayvon qo'shish</a>
+        <a href="#" class="btn btn-secondary">Barcha hayvonlar</a>
+        {% else %}
+        <a href="{% url 'register' %}" class="btn btn-primary">Ro'yxatdan o'tish</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Tizimga kirish</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Filtr bo'limi -->
+<section class="filter-section">
+    <h2 style="margin-bottom: 20px; color: var(--primary-dark);">Hayvonlarni filterlash</h2>
+    <form method="GET" action="{% url 'home' %}" class="filter-form" id="filterForm">
+        <div class="filter-group">
+            <label class="filter-label" for="category">Kategoriya</label>
+            <select name="category" id="category" class="filter-select">
+                <option value="">Barchasi</option>
+                <option value="free" {% if current_category == 'free' %}selected{% endif %}>Bepul hayvonlar</option>
+                <option value="paid" {% if current_category == 'paid' %}selected{% endif %}>Pulli hayvonlar</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label" for="animal_type">Hayvon turi</label>
+            <select name="animal_type" id="animal_type" class="filter-select">
+                <option value="">Barcha turlar</option>
+                <option value="dog" {% if current_animal_type == 'dog' %}selected{% endif %}>Kuchuklar</option>
+                <option value="cat" {% if current_animal_type == 'cat' %}selected{% endif %}>Mushuklar</option>
+                <option value="other" {% if current_animal_type == 'other' %}selected{% endif %}>Boshqalar</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label" for="search">Qidirish</label>
+            <input type="text" name="search" id="search" class="filter-input" 
+                   placeholder="Nom, tarif, manzil..." value="{{ search_query }}">
+        </div>
+        
+        <div class="filter-buttons">
+            <button type="submit" class="filter-btn apply">
+                <i class="fas fa-filter"></i> Filtrlash
+            </button>
+            <button type="button" class="filter-btn reset" onclick="resetFilters()">
+                <i class="fas fa-redo"></i> Tozalash
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- Kategoriyalar bo'limi -->
+<section class="categories-section">
+    <h2 class="section-title">Kategoriyalar bo'yicha</h2>
+    <div class="categories-grid">
+        <a href="{% url 'home' %}" class="category-card {% if not current_category and not current_animal_type %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-paw"></i>
+            </div>
+            <h3 class="category-title">Barcha hayvonlar</h3>
+            <div class="category-count">{{ total_animals }} ta hayvon</div>
+        </a>
+        
+        <a href="{% url 'home' %}?category=free" class="category-card {% if current_category == 'free' %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3 class="category-title">Bepul hayvonlar</h3>
+            <div class="category-count">{{ free_animals }} ta hayvon</div>
+        </a>
+        
+        <a href="{% url 'home' %}?category=paid" class="category-card {% if current_category == 'paid' %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-tag"></i>
+            </div>
+            <h3 class="category-title">Pulli hayvonlar</h3>
+            <div class="category-count">{{ paid_animals }} ta hayvon</div>
+        </a>
+        
+        <a href="{% url 'home' %}?animal_type=dog" class="category-card {% if current_animal_type == 'dog' %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-dog"></i>
+            </div>
+            <h3 class="category-title">Kuchuklar</h3>
+            <div class="category-count">{{ dogs_count }} ta hayvon</div>
+        </a>
+        
+        <a href="{% url 'home' %}?animal_type=cat" class="category-card {% if current_animal_type == 'cat' %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-cat"></i>
+            </div>
+            <h3 class="category-title">Mushuklar</h3>
+            <div class="category-count">{{ cats_count }} ta hayvon</div>
+        </a>
+        
+        <a href="{% url 'home' %}?animal_type=other" class="category-card {% if current_animal_type == 'other' %}active{% endif %}">
+            <div class="category-icon">
+                <i class="fas fa-dove"></i>
+            </div>
+            <h3 class="category-title">Boshqa hayvonlar</h3>
+            <div class="category-count">{{ other_count }} ta hayvon</div>
+        </a>
+    </div>
+</section>
+
+<!-- So'nggi qo'shilgan hayvonlar -->
+<section class="pets-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 class="section-title" style="margin: 0;">
+            {% if current_category or current_animal_type or search_query %}
+            Natijalar ({{ animals|length }})
+            {% else %}
+            So'nggi qo'shilgan hayvonlar
+            {% endif %}
+        </h2>
+        
+        {% if current_category or current_animal_type or search_query %}
+        <a href="{% url 'home' %}" 
+           class="view-all-btn">
+            Barchasini ko'rish
+        </a>
+        {% endif %}
+    </div>
+    
+    {% if animals %}
+    <div class="pets-grid">
+        {% for animal in animals %}
+        <div class="pet-card">
+            <div class="pet-badge {% if animal.is_for_sale %}paid{% else %}free{% endif %}">
+                {% if animal.is_for_sale %}Sotiladi{% else %}Bepul{% endif %}
+            </div>
+            
+            <div class="pet-image-container">
+                {% if animal.image %}
+                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" class="pet-image">
+                {% else %}
+                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                     alt="{{ animal.name }}" class="pet-image">
+                {% endif %}
+            </div>
+            
+            <div class="pet-info">
+                <h3 class="pet-name">{{ animal.name }}</h3>
+                
+                <div class="pet-type">
+                    {% if animal.animal_type == 'dog' %}
+                    <i class="fas fa-dog"></i>
+                    <span>Kuchuk</span>
+                    {% elif animal.animal_type == 'cat' %}
+                    <i class="fas fa-cat"></i>
+                    <span>Mushuk</span>
+                    {% else %}
+                    <i class="fas fa-paw"></i>
+                    <span>Boshqa</span>
+                    {% endif %}
+                    {% if animal.breed %}<span>• {{ animal.breed }}</span>{% endif %}
+                </div>
+                
+                <div class="pet-details">
+                    {% if animal.age %}
+                    <div class="pet-detail">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>{{ animal.age }} yosh</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if animal.gender %}
+                    <div class="pet-detail">
+                        <i class="fas fa-venus-mars"></i>
+                        <span>{{ animal.gender }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="pet-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ animal.location }}</span>
+                    </div>
+                </div>
+                
+                <div class="pet-price {% if not animal.is_for_sale %}free{% endif %}">
+                    {% if animal.is_for_sale %}
+                    {{ animal.price|default:"Narx kelishiladi" }} so'm
+                    {% else %}
+                    Bepul
+                    {% endif %}
+                </div>
+                
+                <a href="{% url 'animal_detail' animal.pk %}" class="btn-small">Batafsil ko'rish</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-animals">
+        <div class="no-animals-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h3>Hech qanday hayvon topilmadi</h3>
+        <p>Filtirlarni o'zgartiring yoki yangi hayvon qo'shing</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_animal' %}" class="btn" style="margin-top: 20px;">Hayvon qo'shish</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if not current_category and not current_animal_type and not search_query %}
+    <div class="view-all">
+        <a href="#" class="view-all-btn">Barcha hayvonlarni ko'rish</a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Tez amallar bo'limi -->
+<section class="quick-actions">
+    <h2 class="section-title">Tez amallar</h2>
+    <div class="actions-grid">
+        <div class="action-card" onclick="location.href='#'">
+            <div class="action-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <h3 class="action-title">Hayvon qo'shish</h3>
+            <p class="action-description">O'zingizning hayvoningizni platformada joylang</p>
+        </div>
+        
+        <div class="action-card" onclick="location.href='#'">
+            <div class="action-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3 class="action-title">Bepul hayvonlar</h3>
+            <p class="action-description">Bepul beriladigan hayvonlarni ko'ring</p>
+        </div>
+        
+        <div class="action-card" onclick="location.href='#'">
+            <div class="action-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <h3 class="action-title">Boshpanalar</h3>
+            <p class="action-description">Hayvonlar boshpanalariga xayriya qiling</p>
+        </div>
+        
+        <div class="action-card" onclick="location.href='#'">
+            <div class="action-icon">
+                <i class="fas fa-clinic-medical"></i>
+            </div>
+            <h3 class="action-title">Veterinariyalar</h3>
+            <p class="action-description">Yaqin atrofdagi veterinariya klinikalarini toping</p>
+        </div>
+    </div>
+</section>
+
+<!-- Statistikalar -->
+<section class="stats-section">
+    <h2 class="section-title">Platforma statistikasi</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_animals }}</div>
+            <div class="stat-label">Jami hayvonlar</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ free_animals }}</div>
+            <div class="stat-label">Bepul hayvonlar</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ paid_animals }}</div>
+            <div class="stat-label">Pulli hayvonlar</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ dogs_count }}</div>
+            <div class="stat-label">Kuchuklar</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ cats_count }}</div>
+            <div class="stat-label">Mushuklar</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ other_count }}</div>
+            <div class="stat-label">Boshqa hayvonlar</div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filtrlarni tozalash
+    function resetFilters() {
+        document.getElementById('category').value = '';
+        document.getElementById('animal_type').value = '';
+        document.getElementById('search').value = '';
+        document.getElementById('filterForm').submit();
+    }
+    
+    // URL parametrlarini o'qish va formani to'ldirish
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agar URL da parametrlar bo'lsa, ularni ko'rsatish
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Agar faqat bir marta filtr qo'llash kerak bo'lsa
+        if (urlParams.toString()) {
+            // Form elementlarini avtomatik to'ldirish
+            const category = urlParams.get('category') || '';
+            const animalType = urlParams.get('animal_type') || '';
+            const search = urlParams.get('search') || '';
+            
+            // Form qiymatlarini o'rnatish (DOMContentLoaded da DOM tayyor)
+            setTimeout(() => {
+                if (category) document.getElementById('category').value = category;
+                if (animalType) document.getElementById('animal_type').value = animalType;
+                if (search) document.getElementById('search').value = search;
+            }, 100);
+        }
+    });
+    
+    // Kategoriya kartalariga bosilganda URL ni yangilash
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Agar aktiv kategoriyaga bosilsa, filtrlarni tozalash
+            if (this.classList.contains('active')) {
+                e.preventDefault();
+                resetFilters();
+            }
+        });
+    });
+</script>
+{% endblock %}

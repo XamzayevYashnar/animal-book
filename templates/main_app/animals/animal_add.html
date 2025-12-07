@@ -1,0 +1,614 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Hayvon qo'shish - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Yangi hayvon qo'shish
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Yo'naltirish kartalari -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'animal_add' %}?status=sale" 
+                               class="card h-100 text-center text-decoration-none {% if initial_status == 'sale' %}border-primary{% endif %}">
+                                <div class="card-body">
+                                    <i class="fas fa-tag fa-3x text-success mb-3"></i>
+                                    <h6 class="card-title">Sotish</h6>
+                                    <p class="card-text small">Hayvoningizni sotmoqchimisiz?</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'animal_add' %}?status=adoption" 
+                               class="card h-100 text-center text-decoration-none {% if initial_status == 'adoption' %}border-primary{% endif %}">
+                                <div class="card-body">
+                                    <i class="fas fa-home fa-3x text-info mb-3"></i>
+                                    <h6 class="card-title">Asrab olish</h6>
+                                    <p class="card-text small">Hayvonni asrab olmoqchimisiz?</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'animal_add' %}?status=lost" 
+                               class="card h-100 text-center text-decoration-none {% if initial_status == 'lost' %}border-primary{% endif %}">
+                                <div class="card-body">
+                                    <i class="fas fa-search fa-3x text-warning mb-3"></i>
+                                    <h6 class="card-title">Yo'qolgan</h6>
+                                    <p class="card-text small">Hayvoningiz yo'qolganmi?</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'animal_add' %}?status=found" 
+                               class="card h-100 text-center text-decoration-none {% if initial_status == 'found' %}border-primary{% endif %}">
+                                <div class="card-body">
+                                    <i class="fas fa-home fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">Topilgan</h6>
+                                    <p class="card-text small">Hayvon topdingizmi?</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Umumiy ma'lumotlar -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Asosiy ma'lumotlar</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                                            Hayvonning nomi <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.name }}
+                                        {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.name.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Agar nomi bo'lmasa, "Nomsiz" deb qoldiring</small>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.animal_type.id_for_label }}" class="form-label">
+                                            Hayvon turi <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.animal_type }}
+                                        {% if form.animal_type.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.animal_type.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.breed.id_for_label }}" class="form-label">
+                                            Irqi/Zoti
+                                        </label>
+                                        {{ form.breed }}
+                                        {% if form.breed.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.breed.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Masalan: Olma, Shpits, Fors mushugi</small>
+                                    </div>
+                                    
+                                    <div class="col-md-3 mb-3">
+                                        <label for="{{ form.age.id_for_label }}" class="form-label">
+                                            Yoshi
+                                        </label>
+                                        <div class="input-group">
+                                            {{ form.age }}
+                                            <span class="input-group-text">yosh</span>
+                                        </div>
+                                        {% if form.age.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.age.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-3 mb-3">
+                                        <label for="{{ form.gender.id_for_label }}" class="form-label">
+                                            Jinsi
+                                        </label>
+                                        {{ form.gender }}
+                                        {% if form.gender.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.gender.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label">
+                                        Tavsif <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.description.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Hayvonning xarakteri, odatlari, sog'lig'i haqida ma'lumot bering</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Holat va narx -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-tag me-2"></i>Holat va narx</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.status.id_for_label }}" class="form-label">
+                                            Holati <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.status }}
+                                        {% if form.status.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.status.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3" id="price-field">
+                                        <label for="{{ form.price.id_for_label }}" class="form-label">
+                                            Narxi (so'm)
+                                        </label>
+                                        <div class="input-group">
+                                            {{ form.price }}
+                                            <span class="input-group-text">so'm</span>
+                                        </div>
+                                        {% if form.price.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.price.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Faqat "Sotuvda" holati uchun</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.location.id_for_label }}" class="form-label">
+                                            Joylashuv <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.location }}
+                                        {% if form.location.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.location.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Shahar, tuman, ko'cha</small>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.contact_phone.id_for_label }}" class="form-label">
+                                            Aloqa telefon <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.contact_phone }}
+                                        {% if form.contact_phone.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.contact_phone.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">+998XXXXXXXXX formatida</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sog'liq ma'lumotlari -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i>Sog'liq ma'lumotlari</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            {{ form.is_vaccinated }}
+                                            <label class="form-check-label" for="{{ form.is_vaccinated.id_for_label }}">
+                                                <strong>Emianlanganmi?</strong>
+                                            </label>
+                                        </div>
+                                        {% if form.is_vaccinated.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.is_vaccinated.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            {{ form.is_sterilized }}
+                                            <label class="form-check-label" for="{{ form.is_sterilized.id_for_label }}">
+                                                <strong>Sterilizatsiya qilinganmi?</strong>
+                                            </label>
+                                        </div>
+                                        {% if form.is_sterilized.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.is_sterilized.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.health_info.id_for_label }}" class="form-label">
+                                        Sog'liq haqida qo'shimcha ma'lumot
+                                    </label>
+                                    {{ form.health_info }}
+                                    {% if form.health_info.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.health_info.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Kasalliklar, allergiyalar, maxsus ehtiyojlar</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rasm -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-images me-2"></i>Rasmlar</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="{{ form.image.id_for_label }}" class="form-label">
+                                        Asosiy rasm <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.image }}
+                                    {% if form.image.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.image.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Eng yaxshi, aniq va yorug' rasmni tanlang</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.additional_images.id_for_label }}" class="form-label">
+                                        Qo'shimcha rasmlar
+                                    </label>
+                                    {{ form.additional_images }}
+                                    {% if form.additional_images.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.additional_images.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Bir nechta rasmlarni tanlashingiz mumkin (Ctrl yoki Cmd tugmasini bosib)</small>
+                                </div>
+                                
+                                <!-- Rasm ko'rsatish (oldindan ko'rish) -->
+                                <div id="image-preview" class="row mt-3" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header bg-light py-2">
+                                                <small>Asosiy rasm</small>
+                                            </div>
+                                            <div class="card-body text-center">
+                                                <img id="main-image-preview" class="img-thumbnail" style="max-height: 200px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header bg-light py-2">
+                                                <small>Qo'shimcha rasmlar</small>
+                                            </div>
+                                            <div class="card-body">
+                                                <div id="additional-images-preview" class="d-flex flex-wrap gap-2">
+                                                    <!-- Bu yerda qo'shimcha rasmlar chiqadi -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Qo'shimcha ma'lumotlar -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-ellipsis-h me-2"></i>Qo'shimcha ma'lumotlar</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.size.id_for_label }}" class="form-label">
+                                            O'lchami
+                                        </label>
+                                        {{ form.size }}
+                                        {% if form.size.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.size.errors }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Kichik, O'rta, Katta</small>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.color.id_for_label }}" class="form-label">
+                                            Rangi
+                                        </label>
+                                        {{ form.color }}
+                                        {% if form.color.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.color.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.special_notes.id_for_label }}" class="form-label">
+                                        Maxsus e'tiborlar
+                                    </label>
+                                    {{ form.special_notes }}
+                                    {% if form.special_notes.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.special_notes.errors }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Maxsus ehtiyojlar, dietalar, qo'rqishlari</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tugmalar -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'animals_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Orqaga
+                            </a>
+                            <div>
+                                <button type="submit" name="save_draft" value="true" class="btn btn-outline-warning me-2">
+                                    <i class="fas fa-save me-2"></i>Qoralamada saqlash
+                                </button>
+                                <button type="submit" name="publish" value="true" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>E'lon qilish
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Ogohlantirishlar -->
+                <div class="card-footer bg-light">
+                    <div class="alert alert-info mb-0">
+                        <div class="d-flex">
+                            <i class="fas fa-info-circle me-3 mt-1"></i>
+                            <div>
+                                <h6 class="mb-1">Muhim eslatmalar:</h6>
+                                <ul class="mb-0 small">
+                                    <li>Barcha majburiy maydonlar (*) bilan belgilangan</li>
+                                    <li>Rasmlar aniq va yorug' bo'lishi kerak</li>
+                                    <li>To'g'ri ma'lumotlarni kiriting, noto'g'ri ma'lumotlar uchun javobgarlik mavjud</li>
+                                    <li>Hayvonlarni savdosi qonuniy bo'lishi kerak</li>
+                                    <li>E'lon moderator tomonidan tekshirilgach chop etiladi</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form stillari */
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    /* Nav kartalari */
+    .card.text-center {
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .card.text-center:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-color);
+    }
+    
+    .card.text-center.border-primary {
+        border-color: var(--primary-color) !important;
+        background-color: rgba(var(--primary-rgb), 0.05);
+    }
+    
+    /* Rasm oldindan ko'rish */
+    .img-thumbnail {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Error stillari */
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+        font-size: 0.875em;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Narx maydonini holatga qarab sozlash
+        const statusField = document.getElementById('{{ form.status.id_for_label }}');
+        const priceFieldContainer = document.getElementById('price-field');
+        
+        function togglePriceField() {
+            if (statusField.value === 'sale') {
+                priceFieldContainer.style.display = 'block';
+            } else {
+                priceFieldContainer.style.display = 'none';
+            }
+        }
+        
+        // Boshlang'ich holat
+        togglePriceField();
+        
+        // Holat o'zgarganda
+        statusField.addEventListener('change', togglePriceField);
+        
+        // URL dan status parametrini olish
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlStatus = urlParams.get('status');
+        if (urlStatus && statusField) {
+            statusField.value = urlStatus;
+            togglePriceField();
+        }
+        
+        // Rasm oldindan ko'rish
+        const mainImageInput = document.getElementById('{{ form.image.id_for_label }}');
+        const additionalImagesInput = document.getElementById('{{ form.additional_images.id_for_label }}');
+        const mainImagePreview = document.getElementById('main-image-preview');
+        const additionalImagesPreview = document.getElementById('additional-images-preview');
+        const imagePreviewContainer = document.getElementById('image-preview');
+        
+        mainImageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mainImagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        additionalImagesInput.addEventListener('change', function(event) {
+            additionalImagesPreview.innerHTML = '';
+            const files = event.target.files;
+            
+            for (let i = 0; i < Math.min(files.length, 4); i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-thumbnail';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    img.style.objectFit = 'cover';
+                    additionalImagesPreview.appendChild(img);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            if (files.length > 0) {
+                imagePreviewContainer.style.display = 'flex';
+            }
+        });
+        
+        // Formani yuborishda yuklash indikatori
+        const form = document.querySelector('form');
+        const submitButtons = form.querySelectorAll('button[type="submit"]');
+        
+        submitButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Faqat bosilgan tugma uchun qiymatni o'rnatish
+                submitButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuklanmoqda...';
+                });
+                
+                // Bosilgan tugma uchun maxsus belgi qo'shish
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuklanmoqda...';
+            });
+        });
+        
+        // Validatsiya
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Majburiy maydonlarni tekshirish
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    
+                    // Xabar yaratish
+                    let errorDiv = field.nextElementSibling;
+                    if (!errorDiv || !errorDiv.classList.contains('invalid-feedback')) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback d-block';
+                        field.parentNode.insertBefore(errorDiv, field.nextSibling);
+                    }
+                    errorDiv.textContent = 'Bu maydon majburiy';
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            // Agar validatsiyadan o'tmasa, submit ni to'xtatish
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Yuklash belgilarini olib tashlash
+                submitButtons.forEach(btn => {
+                    btn.disabled = false;
+                    if (btn.name === 'save_draft') {
+                        btn.innerHTML = '<i class="fas fa-save me-2"></i>Qoralamada saqlash';
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>E\'lon qilish';
+                    }
+                });
+                
+                // Xabarni ko'rsatish
+                alert('Iltimos, barcha majburiy maydonlarni to\'ldiring!');
+            }
+        });
+        
+        // Xatoliklarni ko'rsatish
+        {% if form.errors %}
+        setTimeout(function() {
+            const firstErrorField = document.querySelector('.is-invalid');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }, 100);
+        {% endif %}
+    });
+</script>
+{% endblock %}

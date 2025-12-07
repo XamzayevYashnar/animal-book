@@ -1,0 +1,406 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}{{ shelter.name }}ga xayriya - Pet Taahkent{% endblock %}
+
+{% block content %}
+<style>
+    /* Umumiy stillar */
+    .card {
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.08);
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        padding: 20px;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 30px;
+    }
+    
+    /* Forma elementlari */
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+    
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    /* To'lov usullari bloki */
+    .payment-method {
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 20px;
+        height: 100%;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .payment-method:hover {
+        border-color: #28a745;
+        transform: scale(1.02);
+    }
+    
+    .payment-method i {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    /* Tugmalar */
+    .btn {
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        border: none;
+    }
+    
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #5a6268 0%, #727b84 100%);
+        transform: translateY(-2px);
+    }
+    
+    /* Boshpana ma'lumotlari */
+    .shelter-info {
+        background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .shelter-info img {
+        border: 3px solid #28a745;
+        padding: 3px;
+        object-fit: cover;
+    }
+    
+    /* Alert */
+    .alert-info {
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        border: none;
+        border-radius: 10px;
+        border-left: 4px solid #17a2b8;
+    }
+    
+    /* Checkbox */
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .form-check-input:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+    
+    /* List */
+    .card-body ul {
+        padding-left: 20px;
+    }
+    
+    .card-body li {
+        margin-bottom: 10px;
+        color: #495057;
+        position: relative;
+    }
+    
+    .card-body li:before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        position: absolute;
+        left: -20px;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 20px;
+        }
+        
+        .payment-method {
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .d-flex.justify-content-between {
+            flex-direction: column;
+        }
+    }
+    
+    /* Animatsiya */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .container {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Input ranglari */
+    input[type="number"] {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    /* Fayl yuklash */
+    input[type="file"]::file-selector-button {
+        background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+    
+    input[type="file"]::file-selector-button:hover {
+        background: linear-gradient(135deg, #5a6268 0%, #727b84 100%);
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-heart me-2"></i>{{ shelter.name }}ga xayriya qilish
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Boshpana ma'lumotlari -->
+                    <div class="shelter-info">
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                {% if shelter.image %}
+                                <img src="{{ shelter.image.url }}" alt="{{ shelter.name }}" 
+                                     class="img-fluid rounded" style="max-height: 100px; width: 100%;">
+                                {% else %}
+                                <div class="bg-light rounded p-3">
+                                    <i class="fas fa-home fa-2x text-muted"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <h5>{{ shelter.name }}</h5>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-map-marker-alt me-2"></i>{{ shelter.address }}
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-phone me-2"></i>{{ shelter.phone_number }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Xayriya formasi -->
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3">Xayriya ma'lumotlari</h5>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="donation_type" class="form-label">Xayriya turi *</label>
+                                    <select class="form-select" id="donation_type" name="donation_type" required>
+                                        {% for type_code, type_name in donation_types %}
+                                        <option value="{{ type_code }}">{{ type_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="amount" class="form-label">Summa (so'm) *</label>
+                                    <input type="number" class="form-control" id="amount" name="amount" 
+                                           min="1000" step="1000" value="100000" required>
+                                    <div class="form-text">Minimal summa: 1,000 so'm</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Xayriya tavsifi (ixtiyoriy)</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" 
+                                          placeholder="Pul, oziq-ovqat, dori-darmon, boshqa narsalar..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Xabar (ixtiyoriy)</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" 
+                                          placeholder="Boshpana xodimlari va hayvonlariga xabar..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="receipt_image" class="form-label">To'lov cheki (ixtiyoriy)</label>
+                                <input type="file" class="form-control" id="receipt_image" name="receipt_image" 
+                                       accept="image/*">
+                                <div class="form-text">Agar to'lov qilgan bo'lsangiz, chek rasmini yuklang</div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous">
+                                <label class="form-check-label" for="is_anonymous">
+                                    Anonim xayriya qilish
+                                </label>
+                                <div class="form-text">Agar belgilasangiz, ismingiz ko'rinmaydi</div>
+                            </div>
+                        </div>
+                        
+                        <!-- To'lov usullari -->
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">To'lov usullari</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="payment-method">
+                                            <i class="fas fa-university fa-2x text-primary"></i>
+                                            <h6>Bank orqali</h6>
+                                            <p class="small text-muted mb-0">Karta raqami: 8600 12** **** 1234</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="payment-method">
+                                            <i class="fas fa-mobile-alt fa-2x text-success"></i>
+                                            <h6>Mobile ilova</h6>
+                                            <p class="small text-muted mb-0">Payme, Click, Uzum bank</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="payment-method">
+                                            <i class="fas fa-hand-holding-usd fa-2x text-warning"></i>
+                                            <h6>Naqd pul</h6>
+                                            <p class="small text-muted mb-0">Boshpanaga kelib berish</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-3">
+                                    <p class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        To'lov qilgach, chek rasmini yuklashingiz mumkin. 
+                                        Xayriyangiz tasdiqlangandan so'ng status o'zgaradi.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tugmalar -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'shelter_detail' shelter.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-heart me-2"></i>Xayriya qilish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Qo'shimcha ma'lumotlar -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Xayriya haqida</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Barcha xayriyalar boshpana hisobiga o'tkaziladi</li>
+                        <li>Har bir xayriya hayvonlar uchun oziq-ovqat, dori va boshqa ehtiyojlarga sarflanadi</li>
+                        <li>Xayriya haqida hisobotlar saytda e'lon qilinadi</li>
+                        <li>Xayriya qilganingiz uchun rahmat!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dinamik summa ko'rsatish
+    document.getElementById('amount').addEventListener('input', function(e) {
+        const value = parseInt(e.target.value);
+        const amountDisplay = document.getElementById('amount-display');
+        
+        if (amountDisplay) {
+            amountDisplay.textContent = value.toLocaleString() + ' so\'m';
+        }
+    });
+    
+    // To'lov usulini tanlash
+    document.querySelectorAll('.payment-method').forEach(method => {
+        method.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.style.borderColor = '';
+                m.style.boxShadow = '';
+            });
+            
+            this.style.borderColor = '#28a745';
+            this.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
+        });
+    });
+    
+    // Formani yuborishdan oldin tekshirish
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const amount = document.getElementById('amount').value;
+        if (amount < 1000) {
+            e.preventDefault();
+            alert('Iltimos, minimal summa 1,000 so\'m kiriting!');
+            return false;
+        }
+        return true;
+    });
+</script>
+{% endblock %}

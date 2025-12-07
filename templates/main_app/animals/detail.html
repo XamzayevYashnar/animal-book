@@ -1,0 +1,832 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block title %}{{ animal.name }} - Pet Taahkent{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --animal-primary: #4CAF50;
+        --animal-primary-dark: #388E3C;
+        --animal-secondary: #2196F3;
+        --animal-light: #F5F5F5;
+        --animal-dark: #333;
+        --animal-gray: #666;
+        --animal-light-gray: #E0E0E0;
+        --animal-success: #4CAF50;
+        --animal-info: #2196F3;
+        --animal-warning: #FF9800;
+        --animal-danger: #F44336;
+    }
+
+    /* Orqaga qaytish tugmasi */
+    .back-btn {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, var(--animal-primary) 0%, var(--animal-primary-dark) 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        color: white;
+    }
+
+    /* Rasm kartasi */
+    .image-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .image-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .animal-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .image-card:hover .animal-image {
+        transform: scale(1.02);
+    }
+
+    .image-placeholder {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .image-placeholder i {
+        font-size: 80px;
+        opacity: 0.8;
+    }
+
+    /* Status va narx badgelari */
+    .status-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 10;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-sale {
+        background: linear-gradient(135deg, var(--animal-success) 0%, #2E7D32 100%);
+        color: white;
+    }
+
+    .status-free {
+        background: linear-gradient(135deg, var(--animal-info) 0%, #1565C0 100%);
+        color: white;
+    }
+
+    .price-tag {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 20px;
+        z-index: 10;
+        box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+    }
+
+    /* Ma'lumotlar kartasi */
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        height: 100%;
+    }
+
+    .animal-name {
+        color: var(--animal-dark);
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 36px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .animal-name:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, var(--animal-primary) 0%, var(--animal-primary-dark) 100%);
+        border-radius: 2px;
+    }
+
+    /* Ma'lumotlar gridi */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .info-item {
+        background: #F8F9FA;
+        padding: 20px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--animal-primary);
+    }
+
+    .info-item:hover {
+        background: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-item i {
+        font-size: 24px;
+        color: var(--animal-primary);
+        margin-bottom: 15px;
+    }
+
+    .info-label {
+        font-size: 12px;
+        color: var(--animal-gray);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .info-value {
+        font-size: 16px;
+        color: var(--animal-dark);
+        font-weight: 600;
+    }
+
+    /* Sog'liq ma'lumotlari */
+    .health-info {
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border-left: 4px solid var(--animal-info);
+    }
+
+    .health-info h5 {
+        color: var(--animal-info);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .health-badges {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .health-badge {
+        background: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 3px 10px rgba(33, 150, 243, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .health-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+    }
+
+    .health-badge i {
+        color: var(--animal-success);
+    }
+
+    /* Tavsif qismi */
+    .description-section {
+        margin-bottom: 30px;
+    }
+
+    .description-section h5 {
+        color: var(--animal-dark);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .description-text {
+        background: #F8F9FA;
+        padding: 25px;
+        border-radius: 15px;
+        line-height: 1.8;
+        color: var(--animal-gray);
+        font-size: 16px;
+        border-left: 4px solid #FFC107;
+    }
+
+    /* Aloqa kartasi */
+    .contact-card {
+        background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        border-left: 4px solid #FF9800;
+    }
+
+    .contact-card h5 {
+        color: #FF9800;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        background: white;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .contact-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.1);
+    }
+
+    .contact-item i {
+        color: #FF9800;
+        font-size: 20px;
+        min-width: 30px;
+    }
+
+    .contact-link {
+        color: var(--animal-dark);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .contact-link:hover {
+        color: #FF9800;
+    }
+
+    /* Tugmalar guruhi */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-action {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-action-primary {
+        background: linear-gradient(135deg, var(--animal-primary) 0%, var(--animal-primary-dark) 100%);
+        color: white;
+        box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-action-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+        color: white;
+    }
+
+    .btn-action-outline {
+        background: transparent;
+        color: var(--animal-primary);
+        border: 2px solid var(--animal-primary);
+    }
+
+    .btn-action-outline:hover {
+        background: var(--animal-primary);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .btn-action-danger {
+        background: transparent;
+        color: var(--animal-danger);
+        border: 2px solid var(--animal-danger);
+    }
+
+    .btn-action-danger:hover {
+        background: var(--animal-danger);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .btn-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    /* O'xshash hayvonlar */
+    .similar-section {
+        margin-top: 60px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        color: var(--animal-dark);
+        font-weight: 700;
+        font-size: 28px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(135deg, var(--animal-primary) 0%, var(--animal-primary-dark) 100%);
+        border-radius: 2px;
+    }
+
+    .view-all-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--animal-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .view-all-link:hover {
+        color: var(--animal-primary-dark);
+        gap: 12px;
+    }
+
+    .similar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+    }
+
+    .similar-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .similar-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .similar-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .similar-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .similar-badge.sale {
+        background: var(--animal-success);
+        color: white;
+    }
+
+    .similar-badge.free {
+        background: var(--animal-info);
+        color: white;
+    }
+
+    .similar-info {
+        padding: 20px;
+    }
+
+    .similar-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--animal-dark);
+    }
+
+    .similar-details {
+        color: var(--animal-gray);
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .similar-link {
+        display: block;
+        text-align: center;
+        padding: 10px;
+        background: var(--animal-primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .similar-link:hover {
+        background: var(--animal-primary-dark);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Animatsiyalar */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    /* Responsive dizayn */
+    @media (max-width: 992px) {
+        .animal-image, .image-placeholder {
+            height: 300px;
+        }
+        
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .animal-name {
+            font-size: 28px;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-group {
+            grid-template-columns: 1fr;
+        }
+        
+        .similar-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .similar-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .status-badge {
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+        
+        .price-tag {
+            bottom: 10px;
+            left: 10px;
+            padding: 8px 20px;
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 fade-in">
+    <!-- Orqaga qaytish -->
+    <a href="{% url 'animals_list' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i>Orqaga
+    </a>
+    
+    <div class="row">
+        <!-- Rasm qismi -->
+        <div class="col-lg-6 mb-4">
+            <div class="image-card">
+                {% if animal.image %}
+                <div class="position-relative">
+                    <img src="{{ animal.image.url }}" class="animal-image" alt="{{ animal.name }}">
+                    <span class="status-badge {% if animal.is_for_sale %}status-sale{% else %}status-free{% endif %}">
+                        {% if animal.is_for_sale %}Sotiladi{% else %}Bepul{% endif %}
+                    </span>
+                    {% if animal.is_for_sale and animal.price %}
+                    <span class="price-tag">{{ animal.price }} so'm</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="image-placeholder">
+                    <i class="fas fa-paw"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Tez amallar -->
+            <div class="action-buttons">
+                {% if animal.user != user and animal.status == 'available' %}
+                <a href="{% url 'request_adoption' animal.pk %}" class="btn-action btn-action-primary">
+                    <i class="fas fa-heart"></i>Asrab olish so'rovi yuborish
+                </a>
+                {% endif %}
+                
+                {% if animal.user == user %}
+                <div class="btn-group">
+                    <a href="{% url 'edit_animal' animal.pk %}" class="btn-action btn-action-outline">
+                        <i class="fas fa-edit"></i>Tahrirlash
+                    </a>
+                    <a href="{% url 'delete_animal' animal.pk %}" class="btn-action btn-action-danger">
+                        <i class="fas fa-trash"></i>O'chirish
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Ma'lumotlar qismi -->
+        <div class="col-lg-6">
+            <div class="info-card">
+                <h1 class="animal-name">{{ animal.name }}</h1>
+                
+                <!-- Asosiy ma'lumotlar -->
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-{% if animal.animal_type == 'dog' %}dog{% elif animal.animal_type == 'cat' %}cat{% else %}paw{% endif %}"></i>
+                        <div class="info-label">Hayvon turi</div>
+                        <div class="info-value">{{ animal.get_animal_type_display }}</div>
+                    </div>
+                    
+                    {% if animal.breed %}
+                    <div class="info-item">
+                        <i class="fas fa-dna"></i>
+                        <div class="info-label">Zoti/Irqi</div>
+                        <div class="info-value">{{ animal.breed }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if animal.age %}
+                    <div class="info-item">
+                        <i class="fas fa-birthday-cake"></i>
+                        <div class="info-label">Yoshi</div>
+                        <div class="info-value">{{ animal.age }} yosh</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if animal.gender %}
+                    <div class="info-item">
+                        <i class="fas fa-venus-mars"></i>
+                        <div class="info-label">Jinsi</div>
+                        <div class="info-value">{{ animal.get_gender_display }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="info-label">Manzil</div>
+                        <div class="info-value">{{ animal.location }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="fas fa-user"></i>
+                        <div class="info-label">Egasi</div>
+                        <div class="info-value">{{ animal.user.get_full_name|default:animal.user.username }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="info-label">Qo'shilgan sana</div>
+                        <div class="info-value">{{ animal.created_at|date:"d.m.Y" }}</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="info-label">Holati</div>
+                        <div class="info-value">{{ animal.get_status_display }}</div>
+                    </div>
+                </div>
+                
+                <!-- Sog'liq ma'lumotlari -->
+                {% if animal.is_vaccinated or animal.is_sterilized %}
+                <div class="health-info">
+                    <h5><i class="fas fa-heartbeat"></i>Sog'liq ma'lumotlari</h5>
+                    <div class="health-badges">
+                        {% if animal.is_vaccinated %}
+                        <div class="health-badge">
+                            <i class="fas fa-syringe"></i>
+                            <span>Emlangan</span>
+                        </div>
+                        {% endif %}
+                        {% if animal.is_sterilized %}
+                        <div class="health-badge">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Sterilizatsiya qilingan</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Tavsif -->
+                <div class="description-section">
+                    <h5><i class="fas fa-file-alt"></i>Tavsif</h5>
+                    <div class="description-text">
+                        {{ animal.description|linebreaks }}
+                    </div>
+                </div>
+                
+                <!-- Aloqa ma'lumotlari -->
+                <div class="contact-card">
+                    <h5><i class="fas fa-phone-alt"></i>Aloqa uchun</h5>
+                    <div class="contact-info">
+                        {% if animal.contact_phone %}
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:{{ animal.contact_phone }}" class="contact-link">
+                                {{ animal.contact_phone }}
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if animal.contact_email %}
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:{{ animal.contact_email }}" class="contact-link">
+                                {{ animal.contact_email }}
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-user-circle"></i>
+                            <a href="#" class="contact-link">
+                                {{ animal.user.get_full_name|default:animal.user.username }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- O'xshash hayvonlar -->
+    {% if similar_animals %}
+    <div class="similar-section">
+        <div class="section-header">
+            <h3 class="section-title">O'xshash hayvonlar</h3>
+            <a href="{% url 'animals_list' %}" class="view-all-link">
+                Barchasini ko'rish <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="similar-grid">
+            {% for similar in similar_animals %}
+            <div class="similar-card">
+                <div class="position-relative">
+                    {% if similar.image %}
+                    <img src="{{ similar.image.url }}" class="similar-image" alt="{{ similar.name }}">
+                    {% else %}
+                    <div style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    {% endif %}
+                    <span class="similar-badge {% if similar.is_for_sale %}sale{% else %}free{% endif %}">
+                        {% if similar.is_for_sale %}Sotiladi{% else %}Bepul{% endif %}
+                    </span>
+                </div>
+                
+                <div class="similar-info">
+                    <h6 class="similar-name">{{ similar.name }}</h6>
+                    <div class="similar-details">
+                        {{ similar.get_animal_type_display }}
+                        {% if similar.breed %}• {{ similar.breed }}{% endif %}
+                        {% if similar.age %}• {{ similar.age }} yosh{% endif %}
+                    </div>
+                    <a href="{% url 'animal_detail' similar.pk %}" class="similar-link">
+                        Batafsil ko'rish
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Rasm hover effekti
+        const animalImage = document.querySelector('.animal-image');
+        if (animalImage) {
+            animalImage.parentElement.addEventListener('mouseenter', function() {
+                animalImage.style.transform = 'scale(1.05)';
+            });
+            
+            animalImage.parentElement.addEventListener('mouseleave', function() {
+                animalImage.style.transform = 'scale(1)';
+            });
+        }
+        
+        // Info item hover effekti
+        const infoItems = document.querySelectorAll('.info-item');
+        infoItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Similar card hover effekti
+        const similarCards = document.querySelectorAll('.similar-card');
+        similarCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

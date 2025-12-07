@@ -1,0 +1,84 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}{{ animal.name }}ni o'chirish - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Hayvonni o'chirish
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-trash fa-3x mb-3"></i>
+                        <h4>Diqqat!</h4>
+                        <p class="mb-0">Siz <strong>{{ animal.name }}</strong> hayvonini o'chirmoqchisiz.</p>
+                    </div>
+                    
+                    <!-- Hayvon ma'lumotlari -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                {% if animal.image %}
+                                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" 
+                                     class="img-fluid rounded" style="max-height: 200px;">
+                                {% else %}
+                                <i class="fas fa-paw fa-4x text-muted"></i>
+                                {% endif %}
+                            </div>
+                            <h5>{{ animal.name }}</h5>
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-{{ animal.animal_type }} me-2"></i>
+                                {{ animal.get_animal_type_display }}
+                                {% if animal.breed %} • {{ animal.breed }}{% endif %}
+                            </p>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-calendar me-2"></i>
+                                {{ animal.created_at|date:"d.m.Y" }} da qo'shilgan
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Ogohlantirish -->
+                    <div class="alert alert-warning mb-4">
+                        <h5><i class="fas fa-info-circle me-2"></i>O'chirish natijalari:</h5>
+                        <ul class="mb-0 text-start">
+                            <li>Hayvon butunlay o'chiriladi</li>
+                            <li>Barcha asrab olish so'rovlari bekor qilinadi</li>
+                            <li>Bu amalni bekor qilib bo'lmaydi</li>
+                            <li>Ma'lumotlar bazasidan butunlay yo'qoladi</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Tugmalar -->
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'animal_detail' animal.pk %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-trash me-2"></i>O'chirishni tasdiqlash
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Alternativa -->
+                    <div class="mt-4">
+                        <p class="text-muted">
+                            O'rniga hayvon holatini 
+                            <a href="{% url 'edit_animal' animal.pk %}" class="text-decoration-none">
+                                "Sotilgan" yoki "Asrab olingan" qilishingiz mumkin
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

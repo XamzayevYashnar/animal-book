@@ -1,0 +1,227 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Biz haqimizda - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero section -->
+    <div class="card bg-primary text-white mb-5">
+        <div class="card-body text-center py-5">
+            <h1 class="display-4 mb-4">Pet Taahkent haqida</h1>
+            <p class="lead mb-0">Shahar hayvonlari ekotizimi - hayvonlar va odamlar o'rtasidagi bog'liqlik</p>
+        </div>
+    </div>
+    
+    <!-- Maqsad va vazifalar -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-bullseye fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title text-center mb-4">Bizning maqsadimiz</h3>
+                    <p class="card-text">
+                        Pet Taahkent platformasi Toshkent shahrida hayvonlarga oid barcha ehtiyojlarni 
+                        qondirishga yordam berish uchun yaratilgan. Bizning asosiy maqsadimiz:
+                    </p>
+                    <ul>
+                        <li>Hayvonlarni himoya qilish va ularga g'amxo'rlik qilish</li>
+                        <li>Odamlar va hayvonlar o'rtasida sog'lom munosabatlarni o'rnatish</li>
+                        <li>Boshpanalardagi hayvonlarga yordam ko'rsatish</li>
+                        <li>Veterinariya xizmatlarini osonlashtirish</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-tasks fa-3x text-success"></i>
+                    </div>
+                    <h3 class="card-title text-center mb-4">Bizning vazifalarimiz</h3>
+                    <p class="card-text">
+                        Platformamiz orqali biz quyidagi vazifalarni bajarishga intilamiz:
+                    </p>
+                    <ul>
+                        <li>Hayvonlarni sotish va sotib olish jarayonini osonlashtirish</li>
+                        <li>Boshpanalarga xayriya qilish imkoniyatini yaratish</li>
+                        <li>Yaqin atrofdagi veterinariyalarni topish</li>
+                        <li>Hayvonlarni vaqtincha asrab qolish imkoniyatini taqdim etish</li>
+                        <li>Hayvonlar haqida ma'lumot va maslahatlar berish</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistikalar -->
+    <div class="card mb-5">
+        <div class="card-header">
+            <h3 class="mb-0">Platforma statistikasi</h3>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="display-4 text-primary fw-bold">{{ total_animals }}</div>
+                    <p class="text-muted">Hayvonlar</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="display-4 text-success fw-bold">{{ total_shelters }}</div>
+                    <p class="text-muted">Boshpanalar</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="display-4 text-warning fw-bold">{{ total_veterinarians }}</div>
+                    <p class="text-muted">Veterinariyalar</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="display-4 text-info fw-bold">{{ total_donations }}</div>
+                    <p class="text-muted">Xayriyalar</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="display-6 text-danger fw-bold">{{ total_donation_amount|floatformat:0 }} so'm</div>
+                <p class="text-muted">Jami xayriya summasi</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Platforma xususiyatlari -->
+    <div class="mb-5">
+        <h3 class="text-center mb-5">Platforma xususiyatlari</h3>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-paw fa-3x text-primary"></i>
+                        </div>
+                        <h5>Hayvonlarni sotish/olish</h5>
+                        <p class="card-text">Hayvonlarni osongina sotish yoki sotib olish imkoniyati</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-home fa-3x text-success"></i>
+                        </div>
+                        <h5>Boshpanalar</h5>
+                        <p class="card-text">Hayvonlar boshpanalariga xayriya qilish va ularni qo'llab-quvvatlash</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clinic-medical fa-3x text-warning"></i>
+                        </div>
+                        <h5>Veterinariyalar</h5>
+                        <p class="card-text">Yaqin atrofdagi veterinariya klinikalarini topish va baholash</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-heart fa-3x text-danger"></i>
+                        </div>
+                        <h5>Xayriya</h5>
+                        <p class="card-text">Hayvonlarga yordam berish uchun xayriya qilish imkoniyati</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-hands-helping fa-3x text-info"></i>
+                        </div>
+                        <h5>Asrab qolish</h5>
+                        <p class="card-text">Hayvonlarni vaqtincha asrab qolish imkoniyati</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-map-marked-alt fa-3x text-secondary"></i>
+                        </div>
+                        <h5>Xarita</h5>
+                        <p class="card-text">Barcha obyektlarni xaritada ko'rish va joylashuvni topish</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Jamoa -->
+    <div class="mb-5">
+        <h3 class="text-center mb-5">Bizning jamoa</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+                             class="rounded-circle mb-3" width="120" height="120">
+                        <h5>Akmal Yusupov</h5>
+                        <p class="text-muted">Asoschi & CEO</p>
+                        <p class="card-text">Hayvonlarni himoya qilish va ularga yordam berishni maqsad qilgan.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" 
+                             class="rounded-circle mb-3" width="120" height="120">
+                        <h5>Dilfuza Rahimova</h5>
+                        <p class="text-muted">Operatsion direktor</p>
+                        <p class="card-text">Boshpanalar va veterinariyalar bilan ishlash bo'yicha mutaxassis.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" 
+                             class="rounded-circle mb-3" width="120" height="120">
+                        <h5>Javohir Toshmatov</h5>
+                        <p class="text-muted">Texnik direktor</p>
+                        <p class="card-text">Platformani texnik jihatdan qo'llab-quvvatlash va rivojlantirish.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Aloqa -->
+    <div class="card bg-light">
+        <div class="card-body text-center py-5">
+            <h3 class="mb-4">Biz bilan bog'laning</h3>
+            <p class="lead mb-4">Savollaringiz yoki takliflaringiz bo'lsa, biz bilan bog'lanishingiz mumkin</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Xabar yuborish
+                </a>
+                <a href="tel:+998711234567" class="btn btn-success btn-lg">
+                    <i class="fas fa-phone me-2"></i>Qo'ng'iroq qilish
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

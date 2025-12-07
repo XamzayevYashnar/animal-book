@@ -1,0 +1,878 @@
+<!-- templates/main_app/shelters/list.html -->
+{% extends 'main_app/base.html' %}
+
+{% block title %}Boshpanalar - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Hayvonlar Boshpanalari</h1>
+    <p class="page-description">Toshkent shahridagi hayvonlar boshpanalari ro'yxati. Bu yerda yordamga muhtoj hayvonlarni topishingiz yoki boshpanaga hayvon topshirishingiz mumkin.</p>
+</div>
+
+<div class="shelters-container">
+    <!-- Filtr va qidiruv bo'limi -->
+    <div class="filter-section">
+        <div class="search-box">
+            <input type="text" id="shelterSearch" placeholder="Boshpana nomi bo'yicha qidirish...">
+            <i class="fas fa-search"></i>
+        </div>
+        
+        <div class="filter-options">
+            <select id="districtFilter">
+                <option value="">Barcha tumanlar</option>
+                <option value="yunusobod">Yunusobod</option>
+                <option value="mirzo-ulugbek">Mirzo Ulug'bek</option>
+                <option value="chilonzor">Chilonzor</option>
+                <option value="yashnobod">Yashnobod</option>
+                <option value="shayhontohur">Shayhontohur</option>
+                <option value="mirobod">Mirobod</option>
+                <option value="olmazor">Olmazor</option>
+                <option value="bektemir">Bektemir</option>
+                <option value="sergeli">Sergeli</option>
+            </select>
+            
+            <select id="capacityFilter">
+                <option value="">Sig'im bo'yicha</option>
+                <option value="low">Past (0-50)</option>
+                <option value="medium">O'rta (51-150)</option>
+                <option value="high">Yuqori (151+)</option>
+            </select>
+            
+            <button class="btn-filter" onclick="applyFilters()">
+                <i class="fas fa-filter"></i> Filtrlash
+            </button>
+            
+            <button class="btn-reset" onclick="resetFilters()">
+                <i class="fas fa-redo"></i> Tozalash
+            </button>
+        </div>
+    </div>
+
+    <!-- Boshpanalar kartalari -->
+    <div class="shelters-grid" id="sheltersGrid">
+        {% for shelter in shelters %}
+        <div class="shelter-card" data-district="{{ shelter.district|lower }}" data-capacity="{{ shelter.current_capacity }}">
+            <div class="shelter-image">
+                {% if shelter.image %}
+                <img src="{{ shelter.image.url }}" alt="{{ shelter.name }}">
+                {% else %}
+                <div class="no-image">
+                    <i class="fas fa-home"></i>
+                </div>
+                {% endif %}
+                
+                {% if shelter.is_verified %}
+                <span class="verified-badge">
+                    <i class="fas fa-check-circle"></i> Tasdiqlangan
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="shelter-info">
+                <h3 class="shelter-name">{{ shelter.name }}</h3>
+                
+                <div class="shelter-meta">
+                    <span class="shelter-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ shelter.district }} tumani
+                    </span>
+                    
+                    <span class="shelter-phone">
+                        <i class="fas fa-phone"></i>
+                        {{ shelter.phone_number }}
+                    </span>
+                </div>
+                
+                <p class="shelter-description">{{ shelter.description|truncatechars:100 }}</p>
+                
+                <div class="shelter-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-paw"></i>
+                        <span class="stat-value">{{ shelter.animal_count }}</span>
+                        <span class="stat-label">Hayvonlar</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span class="stat-value">{{ shelter.volunteer_count }}</span>
+                        <span class="stat-label">Ko'ngillilar</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <i class="fas fa-bed"></i>
+                        <span class="stat-value">{{ shelter.current_capacity }}/{{ shelter.max_capacity }}</span>
+                        <span class="stat-label">Sig'im</span>
+                    </div>
+                </div>
+                
+                <div class="shelter-actions">
+                    <a href="{% url 'shelter_detail' shelter.id %}" class="btn-view">
+                        <i class="fas fa-eye"></i> Ko'rish
+                    </a>
+                    
+                    <a href="{% url 'donate_to_shelter' shelter.id %}" class="btn-donate">
+                        <i class="fas fa-hand-holding-heart"></i> Xayriya qilish
+                    </a>
+                    
+                    <a href="tel:{{ shelter.phone_number }}" class="btn-call">
+                        <i class="fas fa-phone"></i> Qo'ng'iroq
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-results">
+            <i class="fas fa-home fa-3x"></i>
+            <h3>Hech qanday boshpana topilmadi</h3>
+            <p>Hozircha ro'yxatda boshpanalar mavjud emas</p>
+            {% if user.is_staff %}
+            <a href="{% url 'shelter_create' %}" class="btn-add-shelter">
+                <i class="fas fa-plus"></i> Boshpana qo'shish
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if shelters.has_other_pages %}
+    <div class="pagination">
+        {% if shelters.has_previous %}
+        <a href="?page={{ shelters.previous_page_number }}" class="page-link">
+            <i class="fas fa-chevron-left"></i> Oldingi
+        </a>
+        {% endif %}
+        
+        {% for num in shelters.paginator.page_range %}
+            {% if shelters.number == num %}
+            <span class="page-link active">{{ num }}</span>
+            {% elif num > shelters.number|add:'-3' and num < shelters.number|add:'3' %}
+            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if shelters.has_next %}
+        <a href="?page={{ shelters.next_page_number }}" class="page-link">
+            Keyingi <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Statistika paneli -->
+    <div class="stats-panel">
+        <h3><i class="fas fa-chart-bar"></i> Boshpanalar statistikasi</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="stat-content">
+                    <h4>{{ total_shelters }}</h4>
+                    <p>Jami boshpanalar</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <div class="stat-content">
+                    <h4>{{ total_animals }}</h4>
+                    <p>Boshpanalardagi hayvonlar</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h4>{{ total_volunteers }}</h4>
+                    <p>Faol ko'ngillilar</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="stat-content">
+                    <h4>{{ available_capacity }}</h4>
+                    <p>Bo'sh joylar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Qo'shimcha harakatlar -->
+    {% if user.is_staff %}
+    <div class="admin-actions">
+        <h3><i class="fas fa-cogs"></i> Administrator harakatlari</h3>
+        <div class="action-buttons">
+            <a href="{% url 'shelter_create' %}" class="btn-admin">
+                <i class="fas fa-plus-circle"></i> Yangi boshpana qo'shish
+            </a>
+            <a href="#" class="btn-admin">
+                <i class="fas fa-chart-pie"></i> Hisobotlar
+            </a>
+            <a href="#" class="btn-admin">
+                <i class="fas fa-edit"></i> Boshpanalarni boshqarish
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Asosiy konteyner */
+    .shelters-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Sahifa sarlavhasi */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: var(--border-radius);
+        color: white;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .page-description {
+        font-size: 1.1rem;
+        max-width: 800px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+
+    /* Filtr bo'limi */
+    .filter-section {
+        background: white;
+        padding: 25px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+
+    .search-box {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 15px 20px 15px 50px;
+        border: 2px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 16px;
+        transition: var(--transition);
+    }
+
+    .search-box input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(45, 143, 75, 0.1);
+        outline: none;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--light-text);
+    }
+
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .filter-options select {
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        min-width: 180px;
+        cursor: pointer;
+    }
+
+    .filter-options select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .btn-filter, .btn-reset {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-filter {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-filter:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .btn-reset {
+        background: #f8f9fa;
+        color: var(--dark-text);
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-reset:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    /* Boshpanalar gridi */
+    .shelters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    /* Boshpana kartasi */
+    .shelter-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .shelter-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .shelter-image {
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .shelter-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .shelter-card:hover .shelter-image img {
+        transform: scale(1.05);
+    }
+
+    .no-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 60px;
+    }
+
+    .verified-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(45, 143, 75, 0.95);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Boshpana ma'lumotlari */
+    .shelter-info {
+        padding: 25px;
+    }
+
+    .shelter-name {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: var(--dark-text);
+        font-weight: 700;
+    }
+
+    .shelter-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    .shelter-location, .shelter-phone {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--light-text);
+    }
+
+    .shelter-location i {
+        color: #ff6b6b;
+    }
+
+    .shelter-phone i {
+        color: var(--primary-color);
+    }
+
+    .shelter-description {
+        color: var(--light-text);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    /* Statistika */
+    .shelter-stats {
+        display: flex;
+        justify-content: space-between;
+        background: var(--light-bg);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .stat-item {
+        text-align: center;
+        flex: 1;
+    }
+
+    .stat-item i {
+        font-size: 20px;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark-text);
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 12px;
+        color: var(--light-text);
+        margin-top: 5px;
+    }
+
+    /* Harakatlar tugmalari */
+    .shelter-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-view, .btn-donate, .btn-call {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-view {
+        background: var(--light-bg);
+        color: var(--dark-text);
+    }
+
+    .btn-view:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .btn-donate {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    .btn-donate:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+    }
+
+    .btn-call {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-call:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Natija yo'q */
+    .no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+    }
+
+    .no-results i {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+    }
+
+    .no-results h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--dark-text);
+    }
+
+    .no-results p {
+        color: var(--light-text);
+        margin-bottom: 20px;
+    }
+
+    .btn-add-shelter {
+        display: inline-block;
+        padding: 12px 30px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .btn-add-shelter:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 40px 0;
+    }
+
+    .page-link {
+        padding: 10px 18px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--dark-text);
+        font-weight: 600;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-link:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .page-link.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    /* Statistika paneli */
+    .stats-panel {
+        background: white;
+        padding: 30px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+    }
+
+    .stats-panel h3 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        color: var(--dark-text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stats-panel h3 i {
+        color: var(--primary-color);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background: var(--light-bg);
+        padding: 25px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: var(--transition);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-content h4 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+        color: var(--dark-text);
+    }
+
+    .stat-content p {
+        color: var(--light-text);
+        font-size: 14px;
+    }
+
+    /* Admin harakatlari */
+    .admin-actions {
+        background: white;
+        padding: 30px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+    }
+
+    .admin-actions h3 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        color: var(--dark-text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .admin-actions h3 i {
+        color: #ff9800;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .btn-admin {
+        padding: 15px 25px;
+        background: var(--light-bg);
+        color: var(--dark-text);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+        flex: 1;
+        min-width: 250px;
+        justify-content: center;
+    }
+
+    .btn-admin:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* Responsive dizayn */
+    @media (max-width: 768px) {
+        .shelters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-options {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-options select {
+            width: 100%;
+        }
+        
+        .shelter-actions {
+            flex-direction: column;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-admin {
+            min-width: 100%;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .shelter-stats {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .pagination {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<script>
+    // Filtrlash funktsiyasi
+    function applyFilters() {
+        const searchTerm = document.getElementById('shelterSearch').value.toLowerCase();
+        const districtFilter = document.getElementById('districtFilter').value;
+        const capacityFilter = document.getElementById('capacityFilter').value;
+        
+        const shelterCards = document.querySelectorAll('.shelter-card');
+        
+        shelterCards.forEach(card => {
+            const name = card.querySelector('.shelter-name').textContent.toLowerCase();
+            const district = card.dataset.district;
+            const capacity = parseInt(card.dataset.capacity);
+            
+            let show = true;
+            
+            // Qidiruv bo'yicha filtrlash
+            if (searchTerm && !name.includes(searchTerm)) {
+                show = false;
+            }
+            
+            // Tumon bo'yicha filtrlash
+            if (districtFilter && district !== districtFilter) {
+                show = false;
+            }
+            
+            // Sig'im bo'yicha filtrlash
+            if (capacityFilter) {
+                if (capacityFilter === 'low' && capacity > 50) show = false;
+                if (capacityFilter === 'medium' && (capacity <= 50 || capacity > 150)) show = false;
+                if (capacityFilter === 'high' && capacity <= 150) show = false;
+            }
+            
+            // Elementni ko'rsatish/yashirish
+            if (show) {
+                card.style.display = 'block';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+            }
+        });
+    }
+    
+    // Filtrlarni tozalash
+    function resetFilters() {
+        document.getElementById('shelterSearch').value = '';
+        document.getElementById('districtFilter').value = '';
+        document.getElementById('capacityFilter').value = '';
+        
+        const shelterCards = document.querySelectorAll('.shelter-card');
+        
+        shelterCards.forEach(card => {
+            card.style.display = 'block';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 10);
+        });
+    }
+    
+    // Enter tugmasi bilan qidirish
+    document.getElementById('shelterSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
+    });
+    
+    // Avtomatik filtrlash
+    document.getElementById('districtFilter').addEventListener('change', applyFilters);
+    document.getElementById('capacityFilter').addEventListener('change', applyFilters);
+    
+    // Sahifa yuklanganda animatsiya
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.shelter-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

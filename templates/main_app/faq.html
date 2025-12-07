@@ -1,0 +1,241 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Tez-tez so'raladigan savollar - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Sarlavha -->
+            <div class="text-center mb-5">
+                <h1 class="mb-3">Tez-tez so'raladigan savollar</h1>
+                <p class="lead text-muted">Platforma haqida eng ko'p so'raladigan savollar va ularga javoblar</p>
+            </div>
+
+            <!-- FAQ ro'yxati -->
+            <div class="accordion" id="faqAccordion">
+                <!-- Platforma haqida -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            <i class="fas fa-question-circle me-3 text-primary"></i>
+                            Pet Taahkent platformasi nima?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Pet Taahkent - bu Toshkent shahrida hayvonlarga oid barcha ehtiyojlaringizni qondirishga yordam beradigan yagona platforma. Bu yerda hayvonlarni sotish/olish, vaqtincha asrab qolish, hayvonlar boshpanasiga xayriya qilish va yaqin atrofdagi veterinariya klinikalarini topish mumkin.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ro'yxatdan o'tish -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            <i class="fas fa-user-plus me-3 text-primary"></i>
+                            Platformadan foydalanish uchun ro'yxatdan o'tish shartmi?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Hayvonlarni ko'rish va veterinariyalar ro'yxatini ko'rish uchun ro'yxatdan o'tish shart emas. Ammo hayvon qo'shish, sotib olish, asrab olish so'rovi yuborish yoki xayriya qilish uchun ro'yxatdan o'tishingiz va tizimga kirishingiz kerak.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hayvon qo'shish -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            <i class="fas fa-plus-circle me-3 text-primary"></i>
+                            Hayvon qo'shish uchun to'lov talab qilinadimi?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yo'q, hayvon qo'shish mutlaqo bepul. Platforma hayvon egasi va yangi egalarni bog'lashga yordam beradi. Faqat pulli hayvonlar uchun sotuvchi narx belgilaydi, platforma bunga hech qanday komissiya olmaydi.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Xayriya ishonchliligi -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            <i class="fas fa-heart me-3 text-primary"></i>
+                            Xayriya qilish qanchalik ishonchli?
+                        </button>
+                    </h2>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Barcha boshpanalarimiz tekshirilgan va ma'lumotlari tasdiqlangan. Har bir xayriya ma'lumotlari shaffof saqlanadi va siz xayriya holatini kuzatishingiz mumkin. Xayriyangiz to'g'ri yo'naltirilishiga kafolat beramiz.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asrab olish jarayoni -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                            <i class="fas fa-hand-holding-heart me-3 text-primary"></i>
+                            Asrab olish jarayoni qanday amalga oshiriladi?
+                        </button>
+                    </h2>
+                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Asrab olish jarayoni quyidagi bosqichlardan iborat:
+                            <ol class="mt-2">
+                                <li>Yoqqan hayvonni toping</li>
+                                <li>"Asrab olish so'rovi" tugmasini bosing</li>
+                                <li>So'rov formasi to'ldiring (telefon, manzil, tajriba)</li>
+                                <li>Hayvon egasi siz bilan bog'lanadi</li>
+                                <li>Uchrashuv va hayvonni ko'rish</li>
+                                <li>Kelishuv va hayvonni asrab olish</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Veterinariyalarni topish -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                            <i class="fas fa-clinic-medical me-3 text-primary"></i>
+                            Veterinariyalarni qanday topishim mumkin?
+                        </button>
+                    </h2>
+                    <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Veterinariyalar bo'limida barcha klinikalar ro'yxati mavjud. Siz filtrlash yordamida:
+                            <ul class="mt-2">
+                                <li>Klinika turi bo'yicha (umumiy, mutaxassislik, shoshilinch)</li>
+                                <li>Xizmat turi bo'yicha (jarrohlik, emlash, stomatologiya)</li>
+                                <li>Joylashuv bo'yicha (yaqin atrofdagi klinikalar)</li>
+                                <li>Reyting bo'yicha (eng yaxshi baholanganlar)</li>
+                            </ul>
+                            ko'rsatilgan klinikalarni topishingiz mumkin.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hayvon sotish -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                            <i class="fas fa-tag me-3 text-primary"></i>
+                            Hayvonni platformada sotish qoidalari qanday?
+                        </button>
+                    </h2>
+                    <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Hayvonni sotishda quyidagi qoidalarga rioya qilish kerak:
+                            <ul class="mt-2">
+                                <li>Hayvon sog'lom va emlangan bo'lishi kerak</li>
+                                <li>Haqiqiy va aniq ma'lumotlar kiritilishi kerak</li>
+                                <li>Hayvonning yaxshi ko'rinadigan rasmlari bo'lishi tavsiya etiladi</li>
+                                <li>Hayvonlarni qimor o'yinlari uchun sotish taqiqlanadi</li>
+                                <li>Hayvon sotilgandan so'ng holatini "Sotilgan" deb o'zgartirish kerak</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Xavfsizlik -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                            <i class="fas fa-shield-alt me-3 text-primary"></i>
+                            Platforma qanchalik xavfsiz?
+                        </button>
+                    </h2>
+                    <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Biz platformaning xavfsizligiga alohida e'tibor beramiz:
+                            <ul class="mt-2">
+                                <li>Barcha shaxsiy ma'lumotlar shifrlangan holda saqlanadi</li>
+                                <li>To'lovlar xavfsiz kanallar orqali amalga oshiriladi</li>
+                                <li>Barcha foydalanuvchilar tekshiriladi</li>
+                                <li>Shubxli faoliyat uchun monitoring tizimi mavjud</li>
+                                <li>24/7 texnik yordam va qo'llab-quvvatlash</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hayvonni topish -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq9">
+                            <i class="fas fa-search me-3 text-primary"></i>
+                            Qanday qilib o'zimga mos hayvonni topishim mumkin?
+                        </button>
+                    </h2>
+                    <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Hayvon topishda quyidagi filtrlardan foydalanishingiz mumkin:
+                            <ul class="mt-2">
+                                <li><strong>Turi:</strong> Kuchuk, mushuk, quyon, qush va boshqalar</li>
+                                <li><strong>Yoshi:</strong> Kichkina, o'rta, katta yoshdagi</li>
+                                <li><strong>Zoti:</strong> Ma'lum bir zotdagi hayvonlar</li>
+                                <li><strong>Narxi:</strong> Bepul yoki ma'lum summadagi hayvonlar</li>
+                                <li><strong>Joylashuvi:</strong> Yaquin atrofdagi hayvonlar</li>
+                                <li><strong>Qidiruv:</strong> Nom bo'yicha qidirish</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aloqa -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq10">
+                            <i class="fas fa-headset me-3 text-primary"></i>
+                            Qo'shimcha savollarim bo'lsa qayerga murojaat qilishim kerak?
+                        </button>
+                    </h2>
+                    <div id="faq10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Qo'shimcha savollaringiz bo'lsa, quyidagi kanallar orqali biz bilan bog'lanishingiz mumkin:
+                            <ul class="mt-2">
+                                <li><strong>Telefon:</strong> +998 71 123 45 67</li>
+                                <li><strong>Email:</strong> info@petaahkent.uz</li>
+                                <li><strong>Telegram:</strong> @petaahkent_support</li>
+                                <li><strong>Aloqa formasi:</strong> <a href="{% url 'contact' %}">Aloqa sahifasi</a></li>
+                                <li><strong>Ish vaqti:</strong> 09:00 - 18:00 (dushanba-shanba)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qo'shimcha yordam -->
+            <div class="card mt-5">
+                <div class="card-body text-center">
+                    <h4 class="card-title mb-3">Javob topilmagan savolingiz bormi?</h4>
+                    <p class="card-text mb-4">Bizning yordam jamoamiz sizga qo'shimcha ma'lumot berishga tayyor</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'contact' %}" class="btn btn-primary">
+                            <i class="fas fa-envelope me-2"></i>Xabar yuborish
+                        </a>
+                        <a href="tel:+998711234567" class="btn btn-success">
+                            <i class="fas fa-phone me-2"></i>Qo'ng'iroq qilish
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .accordion-button:not(.collapsed) {
+        background-color: #e8f5e9;
+        color: #2d8f4b;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(45, 143, 75, 0.25);
+    }
+</style>
+{% endblock %}

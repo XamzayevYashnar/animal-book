@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pet Taahkent - Shahar hayvonlari ekotizimi{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2d8f4b;
+            --primary-dark: #1a6e34;
+            --primary-light: #a5d6a7;
+            --secondary-color: #ff9800;
+            --telegram-color: #0088cc;
+            --telegram-light: #34b7f1;
+            --light-bg: #f8f9fa;
+            --dark-text: #333;
+            --light-text: #666;
+            --white: #fff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 70px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark-text);
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo-text span {
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 500;
+            font-size: 16px;
+            padding: 8px 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 15px;
+            background-color: var(--light-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-profile:hover {
+            background-color: #e9ecef;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .telegram-floating-btn {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            z-index: 999;
+            background: linear-gradient(135deg, var(--telegram-color) 0%, var(--telegram-light) 100%);
+            color: var(--white);
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            font-size: 16px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .telegram-floating-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 136, 204, 0.4);
+            color: var(--white);
+        }
+        
+        .telegram-floating-btn i {
+            font-size: 24px;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 30px 40px;
+        }
+        
+        .messages {
+            margin-bottom: 30px;
+        }
+        
+        .message {
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .close-message {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.7;
+        }
+        
+        .close-message:hover {
+            opacity: 1;
+        }
+        
+        .footer {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            padding: 40px 0 20px;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .footer-logo .logo-icon {
+            font-size: 28px;
+            color: var(--white);
+            margin-right: 10px;
+        }
+        
+        .footer-logo h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 5px;
+        }
+        
+        .contact-info p {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon.telegram:hover {
+            background-color: var(--telegram-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark-text);
+            cursor: pointer;
+        }
+        
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 0 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .footer-content {
+                padding: 0 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--white);
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                box-shadow: var(--shadow);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .telegram-floating-btn {
+                right: 20px;
+                bottom: 20px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .user-info {
+                display: none;
+            }
+            
+            .user-info.mobile {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                padding: 20px 0;
+            }
+            
+            .telegram-floating-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .telegram-floating-btn i {
+                font-size: 20px;
+            }
+        }
+        
+        /* Main content styles that will be used in home.html */
+        .hero-section {
+            background: linear-gradient(rgba(45, 143, 75, 0.9), rgba(26, 110, 52, 0.9)), url('https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            padding: 80px 40px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--white);
+            color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .btn-telegram {
+            background: linear-gradient(135deg, var(--telegram-color) 0%, var(--telegram-light) 100%);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 136, 204, 0.2);
+        }
+        
+        .btn-telegram:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 136, 204, 0.3);
+            color: var(--white);
+        }
+        
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: var(--primary-dark);
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .features-section {
+            margin-bottom: 60px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--dark-text);
+        }
+        
+        .feature-description {
+            color: var(--light-text);
+            line-height: 1.7;
+        }
+        
+        .pets-section {
+            margin-bottom: 60px;
+        }
+        
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .pet-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .pet-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .pet-info {
+            padding: 20px;
+        }
+        
+        .pet-name {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: var(--dark-text);
+        }
+        
+        .pet-type {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pet-location, .pet-age {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--light-text);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .pet-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 15px 0;
+        }
+        
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 14px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-small:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .quick-actions {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            margin-bottom: 60px;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .action-card {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: var(--border-radius);
+            background-color: var(--light-bg);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            background-color: var(--primary-light);
+            transform: scale(1.05);
+        }
+        
+        .action-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .action-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .action-description {
+            color: var(--light-text);
+            font-size: 14px;
+        }
+        
+        .stats-section {
+            margin-bottom: 60px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: var(--light-text);
+        }
+        
+        .view-all {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .view-all-btn {
+            display: inline-block;
+            padding: 12px 40px;
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .view-all-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .quick-actions {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header qismi -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="{% url 'home' %}" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Pet Taahkent</h1>
+                    <span>Shahar hayvonlari ekotizimi</span>
+                </div>
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Bosh sahifa</a></li>
+                <li><a href="{% url 'animals_list' %}" class="{% if 'animals' in request.path %}active{% endif %}">Hayvonlar</a></li>
+                <li><a href="{% url 'shelters_list' %}" class="{% if 'shelters' in request.path %}active{% endif %}">Boshpanalar</a></li>
+                <li><a href="{% url 'veterinarians_list' %}" class="{% if 'veterinarians' in request.path %}active{% endif %}">Veterinariyalar</a></li>
+                <li><a href="{% url 'donations_list' %}" class="{% if 'donations' in request.path %}active{% endif %}">Xayriya</a></li>
+                <li><a href="{% url 'about' %}" class="{% if 'about' in request.path %}active{% endif %}">Biz haqimizda</a></li>
+                
+                {% if user.is_authenticated %}
+                <div class="user-info mobile">
+                    <div class="user-profile" onclick="window.location.href='#'">
+                        <div class="user-avatar">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <span>{{ user.username }}</span>
+                    </div>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Chiqish</button>
+                    </form>
+                </div>
+                {% endif %}
+            </ul>
+            
+            {% if user.is_authenticated %}
+            <div class="user-info">
+                <div class="user-profile" id="userProfile" onclick="window.location.href='{% url 'profile' %}'">
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <span>{{ user.username }}</span>
+                </div>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Chiqish</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="user-info">
+                <a href="{% url 'login' %}" class="btn-small">Kirish</a>
+                <a href="{% url 'register' %}" class="btn-small" style="background-color: var(--primary-dark);">Ro'yxatdan o'tish</a>
+            </div>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Xabarlar qismi -->
+    {% if messages %}
+    <div class="main-content">
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <span>{{ message }}</span>
+                <button class="close-message" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Asosiy kontent -->
+    <main class="main-content">
+        {% block content %}
+        <!-- Telegram banner - faqat asosiy sahifada ko'rsatish uchun -->
+        {% if request.path == '/' %}
+        <div class="telegram-banner" style="background: linear-gradient(135deg, var(--telegram-color) 0%, var(--telegram-light) 100%); color: white; padding: 30px; border-radius: var(--border-radius); margin-bottom: 30px; text-align: center; box-shadow: var(--shadow);">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <i class="fab fa-telegram" style="font-size: 48px; margin-bottom: 15px;"></i>
+                <h2 style="margin-bottom: 15px;">Telegram botimizga qo'shiling!</h2>
+                <p style="margin-bottom: 20px; font-size: 16px;">@erghijkertyu_bot - Yangi hayvonlar, boshpana yangiliklari va veterinariya maslahatlari haqida birinchi bo'lib xabardor bo'ling.</p>
+                <a href="https://t.me/erghijkertyu_bot" target="_blank" class="btn-telegram">
+                    <i class="fab fa-telegram"></i> Telegram botga o'tish
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        <!-- Bu yerda boshqa sahifalar kontenti bo'ladi -->
+        {% endblock %}
+    </main>
+
+    <!-- Floating Telegram tugmasi -->
+    <a href="https://t.me/erghijkertyu_bot" class="telegram-floating-btn" target="_blank">
+        <i class="fab fa-telegram"></i>
+        <span>Telegram bot</span>
+    </a>
+
+    <!-- Footer qismi -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <h3>Pet Taahkent</h3>
+                </div>
+                <p>Shahar hayvonlari ekotizimi - Toshkent shahrida hayvonlarga oid barcha ehtiyojlaringizni qondirishga yordam beradigan yagona platforma.</p>
+                <div class="social-icons">
+                    <!-- Telegram linki qo'shildi -->
+                    <a href="https://t.me/erghijkertyu_bot" class="social-icon telegram" target="_blank">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Tez havolalar</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Bosh sahifa</a></li>
+                    <li><a href="{% url 'animals_list' %}">Hayvonlar</a></li>
+                    <li><a href="{% url 'shelters_list' %}">Boshpanalar</a></li>
+                    <li><a href="{% url 'veterinarians_list' %}">Veterinariyalar</a></li>
+                    <li><a href="{% url 'donations_list' %}">Xayriya</a></li>
+                    <li><a href="{% url 'faq' %}">Tez-tez so'raladigan savollar</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Aloqa ma'lumotlari</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt"></i> Toshkent shahri, Yunusobod tumani</p>
+                    <p><i class="fas fa-phone"></i> +998 71 123 45 67</p>
+                    <p><i class="fas fa-envelope"></i> info@petaahkent.uz</p>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Yordam</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'faq' %}">Tez-tez so'raladigan savollar</a></li>
+                    <li><a href="{% url 'contact' %}">Aloqa</a></li>
+                    <li><a href="{% url 'terms' %}">Foydalanish shartlari</a></li>
+                    <li><a href="{% url 'privacy' %}">Maxfiylik siyosati</a></li>
+                    <li><a href="{% url 'about' %}">Biz haqimizda</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Pet Taahkent. Barcha huquqlar himoyalangan.</p>
+            <p style="margin-top: 10px; font-size: 12px;">
+                <a href="{% url 'terms' %}" style="color: #ccc; margin-right: 15px;">Foydalanish shartlari</a>
+                <a href="{% url 'privacy' %}" style="color: #ccc;">Maxfiylik siyosati</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobil menyuni ochish/yopish
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Foydalanuvchi profil menyusi
+        document.getElementById('userProfile')?.addEventListener('click', function() {
+            window.location.href = "{% url 'profile' %}";
+        });
+        
+        // Mobil menyudagi profil menyusi
+        document.querySelector('.user-info.mobile .user-profile')?.addEventListener('click', function() {
+            window.location.href = "{% url 'profile' %}";
+        });
+        
+        // Xabarlarni avtomatik yopish
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 300);
+            });
+        }, 5000);
+        
+        // Aktiv menyuni belgilash
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                } else if (linkPath !== '/' && currentPath.includes(linkPath.replace('/', ''))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Footer yilini yangilash
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearElement = document.querySelector('.footer-bottom p:first-child');
+            if (yearElement) {
+                const currentYear = new Date().getFullYear();
+                yearElement.textContent = yearElement.textContent.replace('2023', currentYear);
+            }
+        });
+        
+        // Floating tugma uchun hover effekt
+        const telegramBtn = document.querySelector('.telegram-floating-btn');
+        if (telegramBtn) {
+            telegramBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.05)';
+            });
+            
+            telegramBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

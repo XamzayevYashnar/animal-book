@@ -1,0 +1,1409 @@
+<!-- templates/main_app/veterinarians/list.html -->
+{% extends 'main_app/base.html' %}
+
+{% block title %}Veterinariya klinikalari - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="veterinarians-container">
+    <!-- Sarlavha -->
+    <div class="vet-header">
+        <div class="header-content">
+            <h1><i class="fas fa-clinic-medical"></i> Veterinariya klinikalari</h1>
+            <p class="subtitle">Toshkent shahridagi eng yaxshi veterinariya klinikalari va ularning xizmatlari</p>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'contact' %}" class="btn-add-clinic">
+            <i class="fas fa-plus"></i> Klinika taklif qilish
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Statistikalar paneli -->
+    <div class="stats-panel">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4A90E2, #357ABD);">
+                <i class="fas fa-hospital"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ veterinarians|length }}</h3>
+                <p class="stat-label">Jami klinikalar</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF5252);">
+                <i class="fas fa-ambulance"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">
+                    {% with emergency=0 %}
+                        {% for vet in veterinarians %}
+                            {% if vet.is_emergency %}
+                                {% with emergency|add:1 as emergency %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ emergency }}
+                    {% endwith %}
+                </h3>
+                <p class="stat-label">Shoshilinch xizmat</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50, #388E3C);">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">
+                    {% with high_rating=0 %}
+                        {% for vet in veterinarians %}
+                            {% if vet.rating >= 4.0 %}
+                                {% with high_rating|add:1 as high_rating %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ high_rating }}
+                    {% endwith %}
+                </h3>
+                <p class="stat-label">Yaxshi baholangan</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">
+                    {% with round_the_clock=0 %}
+                        {% for vet in veterinarians %}
+                            {% if "24" in vet.working_hours or "doimiy" in vet.working_hours|lower %}
+                                {% with round_the_clock|add:1 as round_the_clock %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ round_the_clock }}
+                    {% endwith %}
+                </h3>
+                <p class="stat-label">24 soat xizmat</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtrlar bo'limi -->
+    <div class="filter-section">
+        <h3><i class="fas fa-filter"></i> Veterinariyalarni filtrlash</h3>
+        <form method="GET" class="filter-form">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="type">
+                        <i class="fas fa-hospital-alt"></i> Klinika turi
+                    </label>
+                    <select name="type" id="type" class="filter-select">
+                        <option value="">Barchasi</option>
+                        {% for type_code, type_name in clinic_types %}
+                        <option value="{{ type_code }}" {% if current_type == type_code %}selected{% endif %}>
+                            {{ type_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="service">
+                        <i class="fas fa-stethoscope"></i> Xizmat turi
+                    </label>
+                    <select name="service" id="service" class="filter-select">
+                        <option value="">Barchasi</option>
+                        {% for service_code, service_name in services %}
+                        <option value="{{ service_code }}" {% if current_service == service_code %}selected{% endif %}>
+                            {{ service_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="search">
+                        <i class="fas fa-search"></i> Qidirish
+                    </label>
+                    <input type="text" name="search" id="search" class="filter-input" 
+                           placeholder="Klinika nomi, manzili, xizmatlari..." value="{{ search_query }}">
+                </div>
+                
+                <div class="filter-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="emergency" name="emergency" value="yes" 
+                               {% if emergency_filter == 'yes' %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        <i class="fas fa-ambulance"></i> Faqat shoshilinch xizmat
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-filter"></i> Filtrlash
+                </button>
+                <a href="{% url 'veterinarians_list' %}" class="btn-reset">
+                    <i class="fas fa-redo"></i> Tozalash
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Veterinariyalar ro'yxati -->
+    <div class="veterinarians-list-section">
+        <div class="section-header">
+            <h3><i class="fas fa-list"></i> Veterinariya klinikalari</h3>
+            <div class="total-count">{{ veterinarians|length }} ta klinika</div>
+        </div>
+        
+        {% if veterinarians %}
+        <div class="veterinarians-grid">
+            {% for vet in veterinarians %}
+            <div class="vet-card">
+                <!-- Karta ustki qismi (rasm) -->
+                <div class="vet-image-container">
+                    {% if vet.image %}
+                    <img src="{{ vet.image.url }}" alt="{{ vet.name }}" class="vet-image">
+                    {% else %}
+                    <div class="vet-image-placeholder">
+                        <i class="fas fa-clinic-medical fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Reyting -->
+                    <div class="rating-badge">
+                        <i class="fas fa-star"></i>
+                        <span>{{ vet.rating|floatformat:1 }}</span>
+                    </div>
+                    
+                    <!-- Shoshilinch belgisi -->
+                    {% if vet.is_emergency %}
+                    <div class="emergency-badge">
+                        <i class="fas fa-ambulance"></i>
+                        Shoshilinch
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Klinika turi -->
+                    <div class="type-badge">
+                        {{ vet.get_clinic_type_display }}
+                    </div>
+                </div>
+                
+                <!-- Karta kontenti -->
+                <div class="vet-content">
+                    <div class="vet-header-info">
+                        <h3 class="vet-name">{{ vet.name }}</h3>
+                        <p class="vet-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ vet.address|truncatechars:80 }}
+                        </p>
+                    </div>
+                    
+                    <!-- Xizmatlar -->
+                    {% if vet.services %}
+                    <div class="vet-services">
+                        <h4><i class="fas fa-stethoscope"></i> Xizmatlar:</h4>
+                        <div class="services-tags">
+                            {% for service_code, service_name in services %}
+                                {% if service_code in vet.services %}
+                                <span class="service-tag" title="{{ service_name }}">
+                                    {{ service_name|truncatechars:20 }}
+                                </span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Ish vaqti va telefon -->
+                    <div class="vet-details">
+                        <div class="detail-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Ish vaqti:</strong>
+                                <span>{{ vet.working_hours }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Telefon:</strong>
+                                <span class="phone-number">{{ vet.phone_number }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if vet.email %}
+                        <div class="detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email:</strong>
+                                <span>{{ vet.email }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if vet.website %}
+                        <div class="detail-item">
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <strong>Veb-sayt:</strong>
+                                <a href="{{ vet.website }}" target="_blank">{{ vet.website|truncatechars:30 }}</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Karta harakatlari -->
+                <div class="vet-actions">
+                    <a href="{% url 'veterinarian_detail' vet.pk %}" class="btn-details">
+                        <i class="fas fa-info-circle"></i> Batafsil
+                    </a>
+                    
+                    <div class="quick-actions">
+                        <a href="tel:{{ vet.phone_number }}" class="btn-call" title="Qo'ng'iroq qilish">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="https://maps.google.com/?q={{ vet.address }}" target="_blank" class="btn-map" title="Xaritada ko'rish">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </a>
+                        {% if vet.website %}
+                        <a href="{{ vet.website }}" target="_blank" class="btn-website" title="Veb-saytga o'tish">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-stethoscope fa-4x"></i>
+                </div>
+                <h3>Hech qanday veterinariya topilmadi</h3>
+                <p>
+                    {% if current_type or current_service or search_query or emergency_filter %}
+                    Sizning filtr so'rovingizga mos veterinariya topilmadi. 
+                    Filtr parametrlarini o'zgartiring yoki boshqa hududni tanlang.
+                    {% else %}
+                    Hozircha veterinariyalar ro'yxati bo'sh. Tez orada qo'shiladi.
+                    {% endif %}
+                </p>
+                <div class="empty-actions">
+                    <a href="{% url 'veterinarians_list' %}" class="btn-clear">
+                        Barcha filtrlarni tozalash
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn-suggest">
+                        <i class="fas fa-plus"></i> Klinika taklif qilish
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Xarita va qo'shimcha ma'lumotlar -->
+    <div class="additional-info">
+        <!-- Xarita bo'limi -->
+        <div class="map-section">
+            <div class="section-header">
+                <h3><i class="fas fa-map-marked-alt"></i> Veterinariyalar xaritasi</h3>
+            </div>
+            <div class="map-container">
+                <div class="map-placeholder" id="map">
+                    <div class="map-overlay">
+                        <i class="fas fa-map fa-4x"></i>
+                        <h4>Xarita funksiyasi</h4>
+                        <p>Yaqin atrofdagi veterinariyalarni xaritada ko'rish funksiyasi tez orada qo'shiladi</p>
+                    </div>
+                </div>
+                <div class="map-info">
+                    <div class="info-item">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <h5>Veterinariya qo'shish</h5>
+                            <p>
+                                Agar siz veterinariya klinikasi egasi bo'lsangiz yoki yaxshi veterinariya tanisangiz, 
+                                bizga <a href="{% url 'contact' %}">aloqa formasi</a> orqali xabar bering.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maslahatlar -->
+        <div class="advice-section">
+            <div class="advice-card">
+                <div class="advice-icon">
+                    <i class="fas fa-question-circle fa-3x"></i>
+                </div>
+                <div class="advice-content">
+                    <h4>Qanday veterinariya tanlash kerak?</h4>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Klinikaning reytingi va sharhlariga e'tibor bering</li>
+                        <li><i class="fas fa-check-circle"></i> Yaqin atrofdagi klinikalarni tanlang</li>
+                        <li><i class="fas fa-check-circle"></i> Kerakli xizmatlar mavjudligini tekshiring</li>
+                        <li><i class="fas fa-check-circle"></i> Ish vaqtiga e'tibor bering</li>
+                        <li><i class="fas fa-check-circle"></i> Shoshilinch xizmat mavjudligini aniqlang</li>
+                        <li><i class="fas fa-check-circle"></i> Telefon orqali oldindan maslahat oling</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="advice-card">
+                <div class="advice-icon">
+                    <i class="fas fa-headset fa-3x"></i>
+                </div>
+                <div class="advice-content">
+                    <h4>Yordam kerakmi?</h4>
+                    <p>Hayvoningizga veterinariya xizmati kerak bo'lsa yoki maslahat olmoqchi bo'lsangiz, 
+                    bizning platformamizdan foydalanishingiz mumkin.</p>
+                    <div class="advice-actions">
+                        <a href="{% url 'contact' %}" class="btn-advice">
+                            <i class="fas fa-envelope"></i> Maslahat so'rash
+                        </a>
+                        <a href="tel:+998711234567" class="btn-emergency">
+                            <i class="fas fa-phone"></i> 24/7 Qo'llab-quvvatlash
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Asosiy konteyner */
+    .veterinarians-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Sarlavha */
+    .vet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #4A90E2, #357ABD);
+        border-radius: var(--border-radius);
+        color: white;
+        box-shadow: var(--shadow);
+    }
+
+    .header-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-content .subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+    }
+
+    .btn-add-clinic {
+        padding: 15px 30px;
+        background: white;
+        color: #4A90E2;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+        white-space: nowrap;
+    }
+
+    .btn-add-clinic:hover {
+        background: #f8f9fa;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Statistikalar */
+    .stats-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: white;
+    }
+
+    .stat-number {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Filtrlar */
+    .filter-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+    }
+
+    .filter-section h3 {
+        margin-bottom: 25px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.4rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .filter-select, .filter-input {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: var(--transition);
+        background: white;
+    }
+
+    .filter-select:focus, .filter-input:focus {
+        border-color: #4A90E2;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-top: 25px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-weight: normal;
+        position: relative;
+        padding-left: 35px;
+        user-select: none;
+        color: #555;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        display: none;
+    }
+
+    .checkbox-label input[type="checkbox"] + .checkmark {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #fff;
+        border: 2px solid #BDBDBD;
+        border-radius: 4px;
+        transition: var(--transition);
+    }
+
+    .checkbox-label input[type="checkbox"]:checked + .checkmark {
+        background-color: #FF6B6B;
+        border-color: #FF6B6B;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked + .checkmark:after {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .checkbox-label i {
+        margin-left: 8px;
+        color: #FF6B6B;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-filter, .btn-reset {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .btn-filter {
+        background: #4A90E2;
+        color: white;
+    }
+
+    .btn-filter:hover {
+        background: #357ABD;
+        transform: translateY(-2px);
+    }
+
+    .btn-reset {
+        background: #f8f9fa;
+        color: #666;
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-reset:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    /* Veterinariyalar ro'yxati */
+    .veterinarians-list-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f5f5f5;
+    }
+
+    .section-header h3 {
+        font-size: 1.4rem;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .total-count {
+        background: #f8f9fa;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #666;
+    }
+
+    /* Veterinariyalar gridi */
+    .veterinarians-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 30px;
+    }
+
+    /* Veterinariya kartasi */
+    .vet-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: var(--transition);
+        border: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .vet-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        border-color: #4A90E2;
+    }
+
+    /* Rasm qismi */
+    .vet-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .vet-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .vet-card:hover .vet-image {
+        transform: scale(1.05);
+    }
+
+    .vet-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4A90E2;
+    }
+
+    .rating-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255, 193, 7, 0.95);
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .emergency-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 107, 107, 0.95);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .type-badge {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: rgba(33, 150, 243, 0.95);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Karta kontenti */
+    .vet-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .vet-header-info {
+        border-bottom: 1px solid #f5f5f5;
+        padding-bottom: 15px;
+    }
+
+    .vet-name {
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+        color: #333;
+        line-height: 1.3;
+    }
+
+    .vet-address {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        line-height: 1.4;
+    }
+
+    .vet-address i {
+        color: #FF6B6B;
+        margin-top: 2px;
+    }
+
+    /* Xizmatlar */
+    .vet-services h4 {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        color: #4A90E2;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .services-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .service-tag {
+        background: #E3F2FD;
+        color: #1976D2;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: default;
+        transition: var(--transition);
+        border: 1px solid #BBDEFB;
+    }
+
+    .service-tag:hover {
+        background: #BBDEFB;
+        transform: translateY(-2px);
+    }
+
+    /* Tafsilotlar */
+    .vet-details {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: auto;
+    }
+
+    .detail-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .detail-item i {
+        color: #4A90E2;
+        font-size: 16px;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .detail-item div {
+        flex: 1;
+    }
+
+    .detail-item strong {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 2px;
+    }
+
+    .detail-item span, .detail-item a {
+        font-size: 14px;
+        color: #333;
+        word-break: break-word;
+    }
+
+    .phone-number {
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* Harakatlar */
+    .vet-actions {
+        padding: 20px;
+        border-top: 1px solid #f5f5f5;
+        background: #fafafa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-details {
+        padding: 10px 25px;
+        background: #4A90E2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-details:hover {
+        background: #357ABD;
+        transform: translateY(-2px);
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-call, .btn-map, .btn-website {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: var(--transition);
+        color: white;
+    }
+
+    .btn-call {
+        background: #4CAF50;
+    }
+
+    .btn-call:hover {
+        background: #388E3C;
+        transform: translateY(-2px);
+    }
+
+    .btn-map {
+        background: #FF9800;
+    }
+
+    .btn-map:hover {
+        background: #F57C00;
+        transform: translateY(-2px);
+    }
+
+    .btn-website {
+        background: #9C27B0;
+    }
+
+    .btn-website:hover {
+        background: #7B1FA2;
+        transform: translateY(-2px);
+    }
+
+    /* Natija yo'q */
+    .no-results {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .empty-state {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .empty-icon {
+        color: #4A90E2;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .empty-state p {
+        color: #888;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .empty-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-clear, .btn-suggest {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-clear {
+        background: #f8f9fa;
+        color: #666;
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-clear:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .btn-suggest {
+        background: #4A90E2;
+        color: white;
+        border: none;
+    }
+
+    .btn-suggest:hover {
+        background: #357ABD;
+        transform: translateY(-2px);
+    }
+
+    /* Xarita va qo'shimcha ma'lumotlar */
+    .additional-info {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .map-section, .advice-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+    }
+
+    .map-container {
+        margin-top: 20px;
+    }
+
+    .map-placeholder {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .map-overlay {
+        text-align: center;
+        color: #666;
+        padding: 40px;
+    }
+
+    .map-overlay i {
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .map-overlay h4 {
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .map-overlay p {
+        color: #888;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .map-info {
+        margin-top: 20px;
+        padding: 20px;
+        background: #E3F2FD;
+        border-radius: 12px;
+    }
+
+    .info-item {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .info-item i {
+        color: #1976D2;
+        font-size: 20px;
+        margin-top: 3px;
+    }
+
+    .info-item h5 {
+        margin: 0 0 8px 0;
+        color: #0D47A1;
+    }
+
+    .info-item p {
+        margin: 0;
+        color: #37474F;
+        line-height: 1.6;
+    }
+
+    /* Maslahatlar */
+    .advice-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+    }
+
+    .advice-card {
+        display: flex;
+        gap: 25px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        transition: var(--transition);
+    }
+
+    .advice-card:hover {
+        border-color: #4A90E2;
+        transform: translateY(-5px);
+    }
+
+    .advice-icon {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4A90E2;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .advice-content {
+        flex: 1;
+    }
+
+    .advice-content h4 {
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .advice-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .advice-content li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .advice-content li i {
+        color: #4CAF50;
+        margin-top: 3px;
+    }
+
+    .advice-content p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .advice-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-advice, .btn-emergency {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+    }
+
+    .btn-advice {
+        background: #4A90E2;
+        color: white;
+        border: none;
+    }
+
+    .btn-advice:hover {
+        background: #357ABD;
+        transform: translateY(-2px);
+    }
+
+    .btn-emergency {
+        background: #FF6B6B;
+        color: white;
+        border: none;
+    }
+
+    .btn-emergency:hover {
+        background: #FF5252;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive dizayn */
+    @media (max-width: 992px) {
+        .vet-header {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .header-content h1 {
+            justify-content: center;
+        }
+        
+        .veterinarians-grid {
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+        
+        .advice-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .veterinarians-container {
+            padding: 15px;
+        }
+        
+        .vet-header, .filter-section,
+        .veterinarians-list-section, .map-section,
+        .advice-section {
+            padding: 20px;
+        }
+        
+        .header-content h1 {
+            font-size: 1.8rem;
+        }
+        
+        .stats-panel {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .veterinarians-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .vet-actions {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .quick-actions {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .advice-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .advice-icon {
+            align-self: center;
+        }
+        
+        .advice-actions {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-panel {
+            grid-template-columns: 1fr;
+        }
+        
+        .vet-card {
+            margin: 0 -10px;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+        
+        .empty-actions {
+            flex-direction: column;
+        }
+        
+        .btn-clear, .btn-suggest {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    // Filtrlash funksiyasi
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter elementlari
+        const typeSelect = document.getElementById('type');
+        const serviceSelect = document.getElementById('service');
+        const searchInput = document.getElementById('search');
+        const emergencyCheckbox = document.getElementById('emergency');
+        const filterForm = document.querySelector('.filter-form');
+        
+        // URL parametrlarini o'qish
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Filtrlarni to'ldirish
+        if (urlParams.get('type')) {
+            typeSelect.value = urlParams.get('type');
+        }
+        
+        if (urlParams.get('service')) {
+            serviceSelect.value = urlParams.get('service');
+        }
+        
+        if (urlParams.get('search')) {
+            searchInput.value = urlParams.get('search');
+        }
+        
+        if (urlParams.get('emergency') === 'yes') {
+            emergencyCheckbox.checked = true;
+        }
+        
+        // Checkbox stilini o'rnatish
+        emergencyCheckbox.addEventListener('change', function() {
+            const label = this.closest('.checkbox-label');
+            if (this.checked) {
+                label.classList.add('checked');
+            } else {
+                label.classList.remove('checked');
+            }
+        });
+        
+        // Boshlang'ich holatni o'rnatish
+        emergencyCheckbox.dispatchEvent(new Event('change'));
+        
+        // Filtrlashni qayta ishlash
+        typeSelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+        
+        serviceSelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filterForm.submit();
+            }
+        });
+        
+        // Veterinariya kartalariga animatsiya
+        const vetCards = document.querySelectorAll('.vet-card');
+        vetCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+        
+        // Telefon raqamini formatlash
+        document.querySelectorAll('.phone-number').forEach(phone => {
+            const number = phone.textContent.trim();
+            if (number) {
+                // Telefon raqamini chiroyli formatda ko'rsatish
+                const formatted = number.replace(/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
+                phone.textContent = formatted;
+            }
+        });
+    });
+    
+    // Xarita funktsiyasi (kelajakda to'ldiriladi)
+    function initMap() {
+        // Google Maps yoki boshqa xarita xizmatini ishga tushirish uchun
+        console.log('Veterinariyalar xaritasi funksiyasi');
+        
+        // Xarita plaseholder animatsiyasi
+        const mapElement = document.getElementById('map');
+        if (mapElement) {
+            mapElement.addEventListener('click', function() {
+                alert('Xarita funksiyasi tez orada qo'shiladi. Keyinroq qayta urinib ko'ring.');
+            });
+        }
+    }
+    
+    // Sahifa yuklanganda xaritani ishga tushirish
+    window.addEventListener('load', initMap);
+</script>
+{% endblock %}

@@ -1,0 +1,384 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Aloqa - Pet Taahkent{% endblock %}
+
+{% block content %}
+<style>
+    /* Umumiy stillar */
+    .contact-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+        border-bottom: 2px solid rgba(0, 123, 255, 0.1);
+        padding: 1.2rem 1.5rem;
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    }
+    
+    .card-header.bg-warning {
+        background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+    }
+    
+    /* Form elementlari */
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.15);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Checkbox */
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0.2em;
+    }
+    
+    .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    /* Tugma */
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+        border-radius: 10px;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    }
+    
+    /* Kontakt ma'lumotlari */
+    .contact-info h6 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-info p {
+        color: #6c757d;
+        margin-left: 1.8rem;
+    }
+    
+    .contact-info i {
+        width: 1.5rem;
+        text-align: center;
+    }
+    
+    /* Tezkor yordam linklari */
+    .list-group-item {
+        border: none;
+        padding: 1rem 1.25rem;
+        color: #495057;
+        transition: all 0.3s ease;
+        border-radius: 8px !important;
+        margin-bottom: 0.25rem;
+    }
+    
+    .list-group-item:hover {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        color: #007bff;
+        padding-left: 1.5rem;
+    }
+    
+    .list-group-item i {
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover i {
+        transform: scale(1.2);
+    }
+    
+    /* Alert */
+    .alert-info {
+        background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+        border: none;
+        border-radius: 10px;
+        border-left: 4px solid #17a2b8;
+    }
+    
+    /* Xarita bo'limi */
+    .map-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, #6c757d, #495057);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-direction: column;
+    }
+    
+    .map-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+    
+    /* Responsive tuzilish */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn-primary {
+            width: 100%;
+        }
+        
+        .contact-info p {
+            margin-left: 0;
+        }
+    }
+    
+    /* Animatsiyalar */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .container {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-radius: 10px;
+    }
+    
+    /* Required yulduzchasi */
+    .form-label:after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>
+
+<div class="contact-container">
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Kontakt formasi -->
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>Bizga xabar yuboring
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Ismingiz</label>
+                                    <input type="text" class="form-control" id="name" name="name" 
+                                           required {% if user.is_authenticated %}value="{{ user.get_full_name|default:user.username }}"{% endif %}>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email manzilingiz</label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           required {% if user.is_authenticated %}value="{{ user.email }}"{% endif %}>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Mavzu</label>
+                                <select class="form-select" id="subject" name="subject" required>
+                                    <option value="">Tanlang</option>
+                                    <option value="general">Umumiy savol</option>
+                                    <option value="technical">Texnik muammo</option>
+                                    <option value="animal">Hayvon haqida</option>
+                                    <option value="donation">Xayriya haqida</option>
+                                    <option value="suggestion">Taklif</option>
+                                    <option value="other">Boshqa</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Xabaringiz</label>
+                                <textarea class="form-control" id="message" name="message" 
+                                          rows="6" required placeholder="Xabaringizni bu yerda yozing..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                    <label class="form-check-label" for="newsletter">
+                                        Yangiliklar va yangilanishlar haqida xabardor bo'lishni istayman
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Xabarni yuborish
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kontakt ma'lumotlari -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Aloqa ma'lumotlari</h5>
+                    </div>
+                    <div class="card-body contact-info">
+                        <div class="mb-4">
+                            <h6>
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                Manzil
+                            </h6>
+                            <p class="mb-0">Toshkent shahri, Yunusobod tumani</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                Telefon raqamlar
+                            </h6>
+                            <p class="mb-1">
+                                <a href="tel:+998711234567" class="text-decoration-none text-primary">
+                                    +998 (71) 123-45-67
+                                </a>
+                            </p>
+                            <p class="mb-0">
+                                <a href="tel:+998901234567" class="text-decoration-none text-primary">
+                                    +998 (90) 123-45-67
+                                </a>
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                Email
+                            </h6>
+                            <p class="mb-0">
+                                <a href="mailto:info@petaahkent.uz" class="text-decoration-none text-primary">
+                                    info@petaahkent.uz
+                                </a>
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h6>
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                Ish vaqti
+                            </h6>
+                            <p class="mb-1">Dushanba - Juma: 09:00 - 18:00</p>
+                            <p class="mb-0">Shanba: 10:00 - 16:00</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tezkor yordam -->
+                <div class="card">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0 text-white">Tezkor yordam</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <a href="{% url 'faq' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-question-circle me-2 text-primary"></i>
+                                Tez-tez beriladigan savollar
+                            </a>
+                            <a href="{% url 'terms' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-contract me-2 text-primary"></i>
+                                Foydalanish shartlari
+                            </a>
+                            <a href="{% url 'privacy' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-shield-alt me-2 text-primary"></i>
+                                Maxfiylik siyosati
+                            </a>
+                            <a href="{% url 'animals_list' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-paw me-2 text-primary"></i>
+                                Hayvonlarni ko'rish
+                            </a>
+                            <a href="{% url 'shelters_list' %}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-home me-2 text-primary"></i>
+                                Boshpanalar ro'yxati
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Xarita -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-map-marked-alt me-2"></i>Joylashuv
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Xarita funksiyasi tez orada qo'shiladi
+                    </p>
+                </div>
+                <!-- Xarita placeholder -->
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt map-icon"></i>
+                    <h4>Xarita tez orada qo'shiladi</h4>
+                    <p class="mt-2">Bizning joylashuvimiz Toshkent shahrida</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

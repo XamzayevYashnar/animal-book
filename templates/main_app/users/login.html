@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Taahkent - Tizimga kirish</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .left-side {
+            flex: 1;
+            background: linear-gradient(135deg, #2d8f4b 0%, #1a6e34 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .left-side::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .left-side::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -80px;
+            left: -80px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo-icon {
+            font-size: 36px;
+            margin-right: 15px;
+        }
+        
+        .logo-text h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .platform-info {
+            position: relative;
+            z-index: 1;
+            margin-top: 30px;
+        }
+        
+        .platform-info h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial p {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .author-info h4 {
+            font-size: 16px;
+        }
+        
+        .author-info span {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .right-side {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: white;
+        }
+        
+        .form-container {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            margin-bottom: 30px;
+        }
+        
+        .form-header h2 {
+            font-size: 28px;
+            color: #2d8f4b;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #666;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .input-with-icon input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-with-icon input:focus {
+            border-color: #2d8f4b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 143, 75, 0.1);
+        }
+        
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 8px;
+        }
+        
+        .forgot-password {
+            color: #2d8f4b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #2d8f4b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #1a6e34;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #999;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #eee;
+        }
+        
+        .divider::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #eee;
+        }
+        
+        .social-login {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .social-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .social-btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .social-btn.google i {
+            color: #db4437;
+        }
+        
+        .social-btn.facebook i {
+            color: #4267B2;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+        }
+        
+        .register-link a {
+            color: #2d8f4b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-side, .right-side {
+                padding: 30px 20px;
+            }
+            
+            .left-side {
+                padding-top: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chap tomon (platforma haqida ma'lumot) -->
+        <div class="left-side">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Pet Taahkent</h1>
+                    <span>Shahar hayvonlari ekotizimi</span>
+                </div>
+            </div>
+            
+            <div class="platform-info">
+                <h2>Hayvonlarni himoya qilish, g'amxo'rlik qilish va ulardan bahramand bo'lish platformasi</h2>
+                <p>Pet Taahkent - bu Toshkent shahrida hayvonlarga oid barcha ehtiyojlaringizni qondirishga yordam beradigan yagona platforma.</p>
+                
+                <div class="testimonial">
+                    <p>"Pet Taahkent yordamida o'zimga yoqadigan mushukcha topdim va uni asrab oldim. Platforma juda qulay va ishonchli!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Foydalanuvchi">
+                        <div class="author-info">
+                            <h4>Dilfuza Rahimova</h4>
+                            <span>Platforma foydalanuvchisi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- O'ng tomon (forma) -->
+        <div class="right-side">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Tizimga kirish</h2>
+                    <p>Hisobingizga kiring va hayvonlar dunyosini kashf eting</p>
+                </div>
+                
+                <!-- Xato xabarlari -->
+                {% if error %}
+                <div class="alert alert-error">
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                <!-- Django xabarlari -->
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="username">Foydalanuvchi nomi</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" name="username" placeholder="Foydalanuvchi nomi" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Parol</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" placeholder="Parolingiz" required>
+                        </div>
+                    </div>
+                    
+                    <div class="options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Meni eslab qol</label>
+                        </div>
+                        <a href="#" class="forgot-password">Parolni unutdingizmi?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn">Tizimga kirish</button>
+                </form>
+                
+                <div class="divider">yoki</div>
+                
+                <div class="social-login">
+                    <div class="social-btn google">
+                        <i class="fab fa-google"></i>
+                        <span>Google bilan</span>
+                    </div>
+                    <div class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Facebook bilan</span>
+                    </div>
+                </div>
+                
+                <div class="register-link">
+                    Hisobingiz yo'qmi? <a href="{% url 'register' %}">Ro'yxatdan o'ting</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Social login tugmalari uchun funktsiya
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const provider = this.classList.contains('google') ? 'Google' : 'Facebook';
+                alert(`${provider} orqali tizimga kirish funktsiyasi ishga tushirildi.`);
+            });
+        });
+        
+        // Parolni tiklash uchun funktsiya
+        document.querySelector('.forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Parolni tiklash funktsiyasi ishga tushirildi. Elektron pochtangizni tekshiring.');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Xayriya qilish - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-heart me-2"></i>Xayriya qilish
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Boshpana tanlash -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Boshpana tanlash</h5>
+                            <div class="row">
+                                {% for shelter in shelters %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" 
+                                                       name="shelter" id="shelter{{ shelter.pk }}" 
+                                                       value="{{ shelter.pk }}" required 
+                                                       {% if forloop.first %}checked{% endif %}>
+                                                <label class="form-check-label w-100" for="shelter{{ shelter.pk }}">
+                                                    <h6 class="mb-1">{{ shelter.name }}</h6>
+                                                    <p class="small text-muted mb-1">{{ shelter.address|truncatechars:30 }}</p>
+                                                    <p class="small text-muted mb-0">
+                                                        <i class="fas fa-paw me-1"></i>
+                                                        {{ shelter.current_animals }}/{{ shelter.capacity }} hayvon
+                                                    </p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Xayriya ma'lumotlari -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Xayriya ma'lumotlari</h5>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="donation_type" class="form-label">Xayriya turi *</label>
+                                    <select class="form-select" id="donation_type" name="donation_type" required>
+                                        {% for type_code, type_name in donation_types %}
+                                        <option value="{{ type_code }}">{{ type_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="amount" class="form-label">Summa (so'm) *</label>
+                                    <input type="number" class="form-control" id="amount" name="amount" 
+                                           min="1000" step="1000" value="50000" required>
+                                    <div class="form-text">Minimal summa: 1,000 so'm</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Xayriya tavsifi (ixtiyoriy)</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" 
+                                          placeholder="Misol: yosh hayvonlar uchun oziq-ovqat..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Shaxsiy ma'lumotlar -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">Shaxsiy ma'lumotlar</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous">
+                                    <label class="form-check-label" for="is_anonymous">
+                                        Anonim xayriya qilish
+                                    </label>
+                                    <div class="form-text">Agar belgilasangiz, ismingiz ko'rinmaydi</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Xabar (ixtiyoriy)</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" 
+                                          placeholder="Boshpana xodimlari va hayvonlariga xabar..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="receipt_image" class="form-label">To'lov cheki (ixtiyoriy)</label>
+                                <input type="file" class="form-control" id="receipt_image" name="receipt_image" 
+                                       accept="image/*">
+                                <div class="form-text">Agar to'lov qilgan bo'lsangiz, chek rasmini yuklang</div>
+                            </div>
+                        </div>
+                        
+                        <!-- To'lov usullari -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">To'lov usullari</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="accordion" id="paymentMethods">
+                                    <!-- Bank karti -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                                    data-bs-target="#bankCard">
+                                                <i class="fas fa-credit-card me-3"></i>Bank karti
+                                            </button>
+                                        </h2>
+                                        <div id="bankCard" class="accordion-collapse collapse show">
+                                            <div class="accordion-body">
+                                                <p><strong>Karta raqami:</strong> 8600 12** **** 1234</p>
+                                                <p><strong>Karta egasi:</strong> Pet Taahkent Xayriya Fondi</p>
+                                                <p><strong>Bank:</strong> Xalq banki</p>
+                                                <div class="alert alert-info mt-3">
+                                                    <p class="mb-0 small">
+                                                        <i class="fas fa-info-circle me-2"></i>
+                                                        To'lov qilgach, chek rasmini yuklashingizni unutmang
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Mobil ilova -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#mobileApp">
+                                                <i class="fas fa-mobile-alt me-3"></i>Mobil ilova
+                                            </button>
+                                        </h2>
+                                        <div id="mobileApp" class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <p>Quyidagi mobil ilovalar orqali to'lov qilishingiz mumkin:</p>
+                                                <div class="row">
+                                                    <div class="col-4 text-center">
+                                                        <i class="fab fa-cc-paypal fa-3x text-primary mb-2"></i>
+                                                        <p class="small mb-0">Payme</p>
+                                                    </div>
+                                                    <div class="col-4 text-center">
+                                                        <i class="fas fa-mobile fa-3x text-success mb-2"></i>
+                                                        <p class="small mb-0">Click</p>
+                                                    </div>
+                                                    <div class="col-4 text-center">
+                                                        <i class="fas fa-wallet fa-3x text-warning mb-2"></i>
+                                                        <p class="small mb-0">Uzum bank</p>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-3 small text-muted">Telefon raqam: +998 90 123 45 67</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Naqd pul -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#cash">
+                                                <i class="fas fa-hand-holding-usd me-3"></i>Naqd pul
+                                            </button>
+                                        </h2>
+                                        <div id="cash" class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <p>Boshpanalarga kelib naqd pul berishingiz mumkin:</p>
+                                                <ul class="mb-0">
+                                                    <li><strong>Toshkent boshpana:</strong> Yunusobod tumani, 7-mavze</li>
+                                                    <li><strong>Chilonzor boshpana:</strong> Chilonzor tumani, 9-mavze</li>
+                                                    <li><strong>Yashnobod boshpana:</strong> Yashnobod tumani, 5-mavze</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tugmalar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'donations_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Bekor qilish
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-heart me-2"></i>Xayriya qilish
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Qo'shimcha ma'lumotlar -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Xayriya haqida</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Barcha xayriyalar hayvonlar uchun oziq-ovqat, dori va boshqa ehtiyojlarga sarflanadi</li>
+                        <li>Har oy xayriya hisobotlari saytda e'lon qilinadi</li>
+                        <li>Xayriya qilganingiz uchun maxsus sertifikat olasiz</li>
+                        <li>Sizning xayriyangiz hayvonlar hayotini yaxshilaydi!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+def animals_list(request):
+    animals = Animal.objects.all().order_by('-created_at')
+    
+    # Filtirlash
+    animal_type = request.GET.get('animal_type')
+    if animal_type:
+        animals = animals.filter(animal_type=animal_type)
+    
+    status = request.GET.get('status')
+    if status:
+        animals = animals.filter(status=status)
+    
+    search_query = request.GET.get('search')
+    if search_query:
+        animals = animals.filter(
+            Q(name__icontains=search_query) |
+            Q(breed__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query)
+        )
+    
+    vaccinated_filter = request.GET.get('vaccinated')
+    if vaccinated_filter == 'yes':
+        animals = animals.filter(is_vaccinated=True)
+    
+    # Statistikalar
+    animals_for_sale = Animal.objects.filter(status='sale')
+    animals_for_adoption = Animal.objects.filter(status='adoption')
+    lost_animals = Animal.objects.filter(status='lost')
+    
+    # Pagination
+    paginator = Paginator(animals, 12)
+    page = request.GET.get('page')
+    try:
+        animals = paginator.page(page)
+    except PageNotAnInteger:
+        animals = paginator.page(1)
+    except EmptyPage:
+        animals = paginator.page(paginator.num_pages)
+    
+    context = {
+        'animals': animals,
+        'animals_for_sale': animals_for_sale,
+        'animals_for_adoption': animals_for_adoption,
+        'lost_animals': lost_animals,
+        'animal_types': Animal.ANIMAL_TYPE_CHOICES,
+        'current_type': animal_type,
+        'current_status': status,
+        'search_query': search_query,
+        'vaccinated_filter': vaccinated_filter,
+    }
+    
+    return render(request, 'main_app/animals/list.html', context)

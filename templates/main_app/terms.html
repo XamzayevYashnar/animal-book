@@ -1,0 +1,179 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Foydalanish shartlari - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Sarlavha -->
+            <div class="text-center mb-5">
+                <h1 class="mb-3">Foydalanish shartlari</h1>
+                <p class="text-muted">Oxirgi yangilanish: {% now "d F Y" %}</p>
+            </div>
+
+            <!-- Kirish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">1. Kirish</h4>
+                    <p>Ushbu foydalanish shartlari Pet Taahkent platformasidan foydalanish tartibini belgilaydi. Platformadan foydalanishingiz bilan siz ushbu shartlarga rozilik bildirasiz.</p>
+                    <p>Platforma Toshkent shahrida hayvonlarga oid xizmatlarni birlashtirish maqsadida yaratilgan.</p>
+                </div>
+            </div>
+
+            <!-- Hisob yaratish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">2. Hisob yaratish</h4>
+                    <ul>
+                        <li>Foydalanuvchi to'g'ri va haqiqiy ma'lumotlarni kiritishi shart</li>
+                        <li>18 yoshdan kichik bo'lgan shaxslar platformadan foydalana olmaydi</li>
+                        <li>Har bir foydalanuvchi faqat bitta hisob yaratishi mumkin</li>
+                        <li>Shaxsiy ma'lumotlaringizni himoya qilish sizning mas'uliyatingizda</li>
+                        <li>Platforma sizning hisobingizni noto'g'ri foydalanishda bloklashi mumkin</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hayvon qo'shish va sotish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">3. Hayvon qo'shish va sotish qoidalari</h4>
+                    <h6>3.1 Umumiy qoidalar</h6>
+                    <ul>
+                        <li>Hayvonlar faqat qonuniy yo'llar bilan olingan bo'lishi kerak</li>
+                        <li>Hayvonning barcha ma'lumotlari haqiqiy bo'lishi shart</li>
+                        <li>Noqonuniy yoki xavfli hayvonlarni qo'shish taqiqlanadi</li>
+                        <li>Hayvon sog'lom va emlangan bo'lishi tavsiya etiladi</li>
+                    </ul>
+
+                    <h6>3.2 Sotish qoidalari</h6>
+                    <ul>
+                        <li>Narx haqiqiy va adolatli bo'lishi kerak</li>
+                        <li>Hayvon sotilgandan so'ng holatini yangilash majburiy</li>
+                        <li>Qimor o'yinlari uchun hayvon sotish mutlaqo taqiqlanadi</li>
+                        <li>Yo'qolgan yoki o'g'irlangan hayvonlarni sotish taqiqlanadi</li>
+                    </ul>
+
+                    <h6>3.3 Tasvirlar</h6>
+                    <ul>
+                        <li>Hayvonning haqiqiy rasmlarini joylashtirish shart</li>
+                        <li>Boshqa shaxslarning rasmlaridan ruxsatsiz foydalanish taqiqlanadi</li>
+                        <li>Noqonuniy yoki axloqsiz tasvirlar olib tashlanadi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Asrab olish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">4. Asrab olish jarayoni</h4>
+                    <ul>
+                        <li>Asrab olishda hayvonning farovonligi birinchi o'rinda turadi</li>
+                        <li>Hayvonni asrab oluvchi unga yaxshi sharoit yaratishi shart</li>
+                        <li>Platforma asrab olish shartnomasini taqdim etadi</li>
+                        <li>Hayvon egasi asrab oluvchini tekshirish huquqiga ega</li>
+                        <li>Noto'g'ri ma'lumot bergan foydalanuvchilar bloklanadi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Xayriya -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">5. Xayriya qoidalari</h4>
+                    <ul>
+                        <li>Xayriya faqat tasdiqlangan boshpanalarga qilinishi mumkin</li>
+                        <li>Barcha xayriya operatsiyalari shaffof amalga oshiriladi</li>
+                        <li>Platforma xayriya summalaridan komissiya olmaydi</li>
+                        <li>Xayriya qaytarib olinmaydi (maxsus holatlar bundan mustasno)</li>
+                        <li>Xayriya maqsadlari haqida hisobotlar muntazam e'lon qilinadi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Huquqlar va majburiyatlar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">6. Platformaning huquqlari va majburiyatlari</h4>
+                    
+                    <h6>6.1 Platformaning huquqlari</h6>
+                    <ul>
+                        <li>Shartlarga rioya qilmaydigan hisoblarni bloklash</li>
+                        <li>Noto'g'ri ma'lumotlarni olib tashlash</li>
+                        <li>Platformani rivojlantirish va o'zgartirish</li>
+                        <li>Zarur hollarda ma'lumotlarni huquqiy organlarga topshirish</li>
+                    </ul>
+
+                    <h6>6.2 Platformaning majburiyatlari</h6>
+                    <ul>
+                        <li>Foydalanuvchi ma'lumotlarini himoya qilish</li>
+                        <li>Platformaning ishlashini ta'minlash</li>
+                        <li>Foydalanuvchi mulohazalarini inobatga olish</li>
+                        <li>Qonuniy talablarga rioya qilish</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Mas'uliyat cheklovi -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">7. Mas'uliyat cheklovi</h4>
+                    <ul>
+                        <li>Platforma hayvon sotuvchi va xaridor o'rtasidagi bitimlarni kafolatlashga majbur emas</li>
+                        <li>Foydalanuvchilar o'zaro bitimlarda o'z mas'uliyatlarini o'zlari oladilar</li>
+                        <li>Platforma veterinariya xizmatlari sifati uchun javobgar emas</li>
+                        <li>Texnik uzilishlar natijasida yuzaga kelgan zararlar uchun javobgarlik cheklangan</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Maxfiylik -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">8. Maxfiylik</h4>
+                    <p>Foydalanuvchi ma'lumotlari <a href="{% url 'privacy' %}">Maxfiylik siyosati</a>ga muvofiq qayta ishlanadi va himoya qilinadi.</p>
+                </div>
+            </div>
+
+            <!-- Shartlarni o'zgartirish -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">9. Shartlarni o'zgartirish</h4>
+                    <ul>
+                        <li>Platforma foydalanish shartlarini istalgan vaqtda o'zgartirish huquqini o'zida saqlaydi</li>
+                        <li>O'zgarishlar platformada e'lon qilinadi</li>
+                        <li>O'zgarishlardan keyin platformadan foydalanish yangi shartlarga rozilik bildirish hisoblanadi</li>
+                        <li>Yangilangan shartlarga rozilik bildirmagan foydalanuvchilar platformani tark etishi mumkin</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Aloqa -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">10. Aloqa</h4>
+                    <p>Ushbu shartlar bo'yicha savollar va takliflar uchun quyidagi kanallar orqali bog'lanishingiz mumkin:</p>
+                    <ul>
+                        <li>Email: legal@petaahkent.uz</li>
+                        <li>Telefon: +998 71 123 45 67</li>
+                        <li>Manzil: Toshkent shahri, Yunusobod tumani</li>
+                        <li>Ish vaqti: Dushanba-Shanba, 09:00-18:00</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Rozilik -->
+            <div class="alert alert-info mt-5">
+                <div class="d-flex">
+                    <i class="fas fa-info-circle fa-2x me-3"></i>
+                    <div>
+                        <h5>Muhim eslatma</h5>
+                        <p class="mb-0">Platformadan foydalanish bilan siz yuqoridagi barcha shartlarga rozilik bildirasiz. Agar siz ushbu shartlarga rozi bo'lmasangiz, platformadan foydalanmang.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

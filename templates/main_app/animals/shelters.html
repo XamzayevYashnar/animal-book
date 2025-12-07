@@ -1,0 +1,219 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Boshpanalar - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-home me-3"></i>Hayvonlar boshpanalari</h1>
+        <a href="{% url 'donations_list' %}" class="btn btn-success">
+            <i class="fas fa-heart me-2"></i>Xayriya qilish
+        </a>
+    </div>
+    
+    <!-- Statistikalar -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Faol boshpanalar</h5>
+                    <h2 class="display-6">{{ shelters|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Sig'im</h5>
+                    <h2 class="display-6">
+                        {% with total_capacity=0 %}
+                        {% for shelter in shelters %}
+                        {{ shelter.capacity|add:total_capacity }}
+                        {% endfor %}
+                        {% endwith %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Band</h5>
+                    <h2 class="display-6">
+                        {% with total_current=0 %}
+                        {% for shelter in shelters %}
+                        {{ shelter.current_animals|add:total_current }}
+                        {% endfor %}
+                        {% endwith %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Bo'sh</h5>
+                    <h2 class="display-6">
+                        {% with total_available=0 %}
+                        {% for shelter in shelters %}
+                        {{ shelter.available_space|add:total_available }}
+                        {% endfor %}
+                        {% endwith %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtrlar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label for="type" class="form-label">Boshpana turi</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">Barcha turlar</option>
+                        <option value="state" {% if current_type == 'state' %}selected{% endif %}>Davlat</option>
+                        <option value="private" {% if current_type == 'private' %}selected{% endif %}>Xususiy</option>
+                        <option value="volunteer" {% if current_type == 'volunteer' %}selected{% endif %}>Ko'ngilli</option>
+                        <option value="international" {% if current_type == 'international' %}selected{% endif %}>Xalqaro</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Qidirish</label>
+                    <input type="text" name="search" id="search" class="form-control" 
+                           placeholder="Boshpana nomi, manzili..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-2"></i>Filtr
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Boshpanalar ro'yxati -->
+    <div class="row">
+        {% if shelters %}
+            {% for shelter in shelters %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="row g-0 h-100">
+                        <!-- Rasm qismi -->
+                        <div class="col-md-4">
+                            {% if shelter.image %}
+                            <img src="{{ shelter.image.url }}" class="img-fluid h-100 w-100" 
+                                 alt="{{ shelter.name }}" style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light h-100 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-home fa-4x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Ma'lumotlar qismi -->
+                        <div class="col-md-8">
+                            <div class="card-body d-flex flex-column h-100">
+                                <!-- Sarlavha va tur -->
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0">{{ shelter.name }}</h5>
+                                    <span class="badge bg-secondary">{{ shelter.get_shelter_type_display }}</span>
+                                </div>
+                                
+                                <!-- Reyting -->
+                                <div class="mb-3">
+                                    {% with ''|center:shelter.rating as range %}
+                                    {% for i in range %}
+                                    <i class="fas fa-star text-warning"></i>
+                                    {% endfor %}
+                                    {% endwith %}
+                                    <span class="text-muted ms-2">{{ shelter.rating|floatformat:1 }}</span>
+                                </div>
+                                
+                                <!-- Manzil -->
+                                <p class="card-text text-muted small mb-3">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{ shelter.address|truncatechars:60 }}
+                                </p>
+                                
+                                <!-- Sig'im statistikasi -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>Sig'im:</small>
+                                        <small><strong>{{ shelter.current_animals }}</strong>/{{ shelter.capacity }}</small>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        {% widthratio shelter.current_animals shelter.capacity 100 as occupancy %}
+                                        <div class="progress-bar {% if occupancy > 90 %}bg-danger{% elif occupancy > 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                             role="progressbar" style="width: {{ occupancy }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tavsif -->
+                                <p class="card-text flex-grow-1 mb-3">
+                                    {{ shelter.description|truncatechars:120 }}
+                                </p>
+                                
+                                <!-- Tugmalar -->
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <span class="text-muted small">
+                                                <i class="fas fa-phone me-1"></i>{{ shelter.phone_number }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <a href="{% url 'shelter_detail' shelter.pk %}" class="btn btn-outline-primary btn-sm me-2">
+                                                <i class="fas fa-info-circle me-1"></i>Batafsil
+                                            </a>
+                                            <a href="{% url 'donate_to_shelter' shelter.pk %}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-heart me-1"></i>Xayriya
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <!-- Hech narsa topilmasa -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-home fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted">Hech qanday boshpana topilmadi</h3>
+                    <p class="text-muted mb-4">Filtr parametrlarini o'zgartiring yoki keyinroq qayta urinib ko'ring</p>
+                    <a href="{% url 'shelters_list' %}" class="btn btn-outline-primary">
+                        Barcha filtrlarni tozalash
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Xayriya chaqiruvi -->
+    <div class="card bg-light mt-5">
+        <div class="card-body text-center py-5">
+            <h2 class="mb-4">Hayvonlarga yordam bering!</h2>
+            <p class="lead mb-4">
+                Har bir xayriya hayvonlar hayotini yaxshilashga yordam beradi. 
+                Siz ham boshpanalarimizga xayriya qilishingiz mumkin.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'create_donation' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-heart me-2"></i>Xayriya qilish
+                </a>
+                <a href="{% url 'animals_list' %}?category=free" class="btn btn-primary btn-lg">
+                    <i class="fas fa-paw me-2"></i>Bepul hayvonlarni ko'rish
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

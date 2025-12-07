@@ -1,0 +1,251 @@
+{% extends 'main_app/base.html' %}
+
+{% block title %}Xayriya #{{ donation.pk }} - Pet Taahkent{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Orqaga qaytish -->
+    <a href="{% url 'donations_list' %}" class="btn btn-outline-secondary mb-4">
+        <i class="fas fa-arrow-left me-2"></i>Xayriyalar ro'yxati
+    </a>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-heart me-2 text-success"></i>Xayriya ma'lumotlari
+                        <span class="badge bg-secondary float-end">#{{ donation.pk }}</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Asosiy ma'lumotlar -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Xayriyachi</h6>
+                            <h5>{{ donation.get_donor_name }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Boshpana</h6>
+                            <h5>
+                                <a href="{% url 'shelter_detail' donation.shelter.pk %}" 
+                                   class="text-decoration-none">
+                                    {{ donation.shelter.name }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                    
+                    <!-- Xayriya ma'lumotlari -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Summa</h6>
+                                    <h3 class="text-success">{{ donation.amount }} so'm</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Turi</h6>
+                                    <h5>{{ donation.get_donation_type_display }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Holati</h6>
+                                    <h5>
+                                        <span class="badge 
+                                            {% if donation.status == 'confirmed' %}bg-success
+                                            {% elif donation.status == 'pending' %}bg-warning
+                                            {% elif donation.status == 'delivered' %}bg-info
+                                            {% else %}bg-secondary{% endif %} fs-6">
+                                            {{ donation.get_status_display }}
+                                        </span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Qo'shimcha ma'lumotlar -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">Sana</h6>
+                        <p>
+                            <i class="fas fa-calendar me-2"></i>
+                            {{ donation.created_at|date:"d.m.Y H:i" }}
+                        </p>
+                        
+                        {% if donation.description %}
+                        <h6 class="text-muted">Tavsif</h6>
+                        <p>{{ donation.description }}</p>
+                        {% endif %}
+                        
+                        {% if donation.message %}
+                        <h6 class="text-muted">Xabar</h6>
+                        <p class="fst-italic">"{{ donation.message }}"</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Chek rasmi -->
+                    {% if donation.receipt_image %}
+                    <div class="mb-4">
+                        <h6 class="text-muted">To'lov cheki</h6>
+                        <img src="{{ donation.receipt_image.url }}" alt="To'lov cheki" 
+                             class="img-fluid rounded" style="max-height: 300px;">
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Status tarixi -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Status tarixi</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item {% if donation.status == 'pending' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>Yaratilgan</h6>
+                                        <p class="text-muted small">{{ donation.created_at|date:"d.m.Y H:i" }}</p>
+                                    </div>
+                                </div>
+                                
+                                {% if donation.status in 'confirmed,delivered' %}
+                                <div class="timeline-item {% if donation.status in 'confirmed,delivered' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>Tasdiqlangan</h6>
+                                        <p class="text-muted small">{{ donation.updated_at|date:"d.m.Y H:i" }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if donation.status == 'delivered' %}
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>Yetkazib berilgan</h6>
+                                        <p class="text-muted small">{{ donation.updated_at|date:"d.m.Y H:i" }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tugmalar -->
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            {% if donation.status == 'pending' and donation.donor == user %}
+                            <button class="btn btn-outline-warning" 
+                                    data-bs-toggle="modal" data-bs-target="#updateReceiptModal">
+                                <i class="fas fa-upload me-2"></i>Chek yuklash
+                            </button>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-primary" onclick="window.print()">
+                                <i class="fas fa-print me-2"></i>Chop etish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rahmat xabari -->
+            <div class="card mt-4 bg-light">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-heart fa-4x text-success mb-4"></i>
+                    <h3>Xayriyangiz uchun rahmat!</h3>
+                    <p class="lead">
+                        Sizning xayriyangiz <strong>{{ donation.shelter.name }}</strong> 
+                        boshpanasidagi hayvonlarga yordam beradi.
+                    </p>
+                    <p class="text-muted">
+                        Xayriyangiz holati: <strong>{{ donation.get_status_display }}</strong>
+                    </p>
+                    <a href="{% url 'shelter_detail' donation.shelter.pk %}" class="btn btn-outline-success mt-2">
+                        <i class="fas fa-home me-2"></i>Boshpanani ko'rish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Receipt Modal -->
+{% if donation.status == 'pending' and donation.donor == user %}
+<div class="modal fade" id="updateReceiptModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'update_donation_receipt' donation.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">To'lov chekini yuklash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Xayriyangizni tezroq tasdiqlash uchun to'lov chekini yuklang.</p>
+                    <div class="mb-3">
+                        <label for="receipt_image" class="form-label">Chek rasmi</label>
+                        <input type="file" class="form-control" id="receipt_image" name="receipt_image" 
+                               accept="image/*" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Yuklash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -24px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #adb5bd;
+}
+
+.timeline-item.active .timeline-marker {
+    background-color: #28a745;
+}
+
+.timeline-content {
+    padding-left: 10px;
+}
+</style>
+{% endblock %}
