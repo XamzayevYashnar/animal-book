@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-okb9&1ctv4h@mykd2_o)9+==o6ztrynh7icupe1&5f5mcm4rw7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'animal-book-0off.onrender.com',
+]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
